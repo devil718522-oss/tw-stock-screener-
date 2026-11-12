@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-Hant-TW"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f1115"><title>當沖助手</title>
+<style>
+:root{--bg:#0f1115;--card:#181b22;--line:#2a2f3a;--tx:#e8eaed;--mut:#8b93a1;--up:#ff4d4f;--dn:#22c55e;--warn:#f5a524}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 -apple-system,"PingFang TC","Noto Sans TC",sans-serif;padding:8px 8px 60px}
+.top{position:sticky;top:0;z-index:9;background:var(--bg);padding:4px 0 6px;border-bottom:1px solid var(--line)}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.sp{flex:1}
+h2{font-size:16px;margin:14px 2px 6px}.mut{color:var(--mut);font-size:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;margin:8px 0}
+.b{display:inline-block;padding:1px 7px;border-radius:999px;font-size:12px;font-weight:600;background:#2a2f3a}
+.b.r{background:#4a1719;color:#ff8a8c}.b.g{background:#123a22;color:#5ee38c}.b.y{background:#3d300e;color:#f5c451}.b.gr{background:#2a2f3a;color:#9aa3b2}
+.up{color:var(--up)}.dn{color:var(--dn)}.big{font-size:22px;font-weight:700}
+.sig{font-size:26px;line-height:1}.dim{opacity:.38;filter:grayscale(1)}
+.lv{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px;text-align:center}
+.lv div{background:#11141a;border-radius:8px;padding:4px 0}.lv b{display:block;font-size:15px}.lv span{font-size:11px;color:var(--mut)}
+.chart{height:150px;margin-top:6px}
+.ban{border-radius:12px;padding:12px;margin:8px 0;font-weight:700;text-align:center}
+.ban.lock{background:#7f1d1d;color:#fff;font-size:22px}.ban.warn{background:#78350f;color:#fff;font-size:17px}.ban.err{background:#3b1d1d;color:#ffb4b4;font-size:14px}
+button,input,select{font:inherit;color:var(--tx);background:#232733;border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+button.p{background:#2563eb;border-color:#2563eb}button.x{padding:2px 8px;background:none;border:none;color:var(--mut)}
+input{width:90px}input.w{width:72px}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:5px 3px;border-bottom:1px solid var(--line);text-align:right}td:first-child,th:first-child{text-align:left}th{color:var(--mut);font-weight:400;font-size:12px}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:8px 0}summary{font-weight:600}
+details p,details li{color:#c4c9d2;font-size:13px}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center}.stat div{background:#11141a;border-radius:10px;padding:6px}.stat b{display:block;font-size:20px}
+</style></head><body>
+<div class="top"><div class="row"><b>⚡ 當沖助手</b><span id="clock" class="mut"></span><span class="sp"></span><a href="../" class="mut">選股網站</a></div>
+<div class="row" style="margin-top:4px"><span id="tx" class="mut">加權 —</span><span class="sp"></span><span id="feed" class="b gr">連線中…</span></div></div>
+<div id="banners"></div>
+
+<h2>🧭 紀律</h2>
+<div class="card"><div class="stat"><div><span class="mut">今日筆數</span><b id="sN">0/2</b></div><div><span class="mut">今日損益</span><b id="sP">0</b></div><div><span class="mut">虧損筆數</span><b id="sL">0/2</b></div></div>
+<div class="row" style="margin-top:8px"><select id="fSide"><option>多</option><option>空</option></select><input id="fCode" placeholder="代號" inputmode="numeric" class="w"><input id="fIn" placeholder="進場價" inputmode="decimal" class="w"><input id="fOut" placeholder="出場價" inputmode="decimal" class="w"><button class="p" id="fAdd">記錄1張</button></div>
+<div class="mut" style="margin-top:4px">先填進場價記一筆；出場後在下面按「平倉」補出場價。</div>
+<table id="tLog" style="margin-top:6px"></table></div>
+
+<h2>📈 盤中訊號 <span class="mut">開盤區間（09:00–09:05 第一根5分K）</span></h2>
+<div class="row"><input id="addCode" placeholder="加代號" inputmode="numeric"><button id="addBtn">＋ 加入</button><span class="sp"></span><button id="ntf">🔔 通知</button></div>
+<div id="cards"></div>
+
+<h2>🌅 盤前候選 <span id="cDate" class="mut"></span></h2>
+<div class="card"><div id="gate" class="mut"></div><table id="cTab"></table></div>
+
+<details><summary>📖 說明</summary>
+<ul>
+<li><b>🟢</b> 現價站上第一根5分K高點（進場訊號）。<b>🔴</b> 跌破第一根低點。<b>⚪</b> 還在區間內，等。<b>🎯</b> 到達 1:2 目標。</li>
+<li>進場＝第一根高點，停損＝第一根低點，目標＝進場＋2×(高−低)。「1張風險」＝(高−低)×1000 元。超過 500 元會變灰色、標「停損超過500」，不做。</li>
+<li>09:05 以前還沒有區間，顯示「等 09:05」。</li>
+<li>紀律：一次最多1張、一天最多2筆、單日虧500或虧2筆就鎖、不攤平（有未平倉時不能再進）、13:00前平倉。12:50 會跳提醒。觸發任何一條就整頁鎖住🔒。</li>
+<li>手續費＝成交金額×0.1425%×<span id="dDisc"></span>（買賣各一次，最低<span id="dMin"></span>元），當沖稅0.15%（賣出時）。實際以券商對帳單為準。</li>
+<li>候選股：前一天上漲、收在當天高檔、量≥5日均量1.5倍且≥3000張，強勢族群（★）優先。每晚更新。標「漲停」的開盤常跳空，區間不好抓。</li>
+<li>報價來源：鉅亨網（cnyes）公開報價，每5秒更新；上方徽章顯示「最後成交距今幾秒」。下單一定要看券商App的即時價。手機螢幕關掉或切到別的App時，瀏覽器會暫停更新，回來會自動補抓。</li>
+<li>點卡片右上 ✕ 可移除；資料都存在這支手機的瀏覽器裡。</li>
+</ul>
+<div class="row"><span class="mut">手續費折數</span><input id="sDisc" class="w" inputmode="decimal"><span class="mut">最低手續費</span><input id="sMin" class="w" inputmode="numeric"><button id="sSave">存</button><button id="resetDay">清除今日紀錄</button></div>
+</details>
+
+<script src="lwc.js"></script>
+<script>
+const API='https://ws.api.cnyes.com/ws/api/v1';
+const LS=k=>JSON.parse(localStorage.getItem('dt_'+k)||'null'), SS=(k,v)=>localStorage.setItem('dt_'+k,JSON.stringify(v));
+const $=id=>document.getElementById(id);
+const TEST=/test=1/.test(location.search);
+const tpe=(d=new Date())=>new Date(d.getTime()+(d.getTimezoneOffset()+480)*60000); // 台北時間
+const today=()=>{const t=tpe();return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')};
+const hm=()=>{if(TEST)return 1000;const t=tpe();return t.getHours()*100+t.getMinutes()};
+const f2=x=>x==null||isNaN(x)?'—':(+x).toFixed(x>=1000?0:2).replace(/\.?0+$/,'');
+const money=x=>(x>0?'+':'')+Math.round(x).toLocaleString();
+let cfg=Object.assign({disc:0.26,min:1},LS('cfg')||{});
+let cand=null, Q={}, BARS={}, OR={}, charts={}, lastSig={}, lastOk=0, hidden=LS('hidden')||[], added=LS('added')||[];
+function trades(){const a=LS('trades')||{};return a[today()]||[]}
+function saveTrades(t){const a=LS('trades')||{};a[today()]=t;Object.keys(a).sort().slice(0,-30).forEach(k=>delete a[k]);SS('trades',a)}
+function fee(amt){return Math.max(cfg.min,Math.floor(amt*0.001425*cfg.disc))}
+function pnl(t){if(t.out==null)return null;const ent=t.inp*1000,ex=t.out*1000;const buy=t.side==='多'?ent:ex,sell=t.side==='多'?ex:ent;return sell-buy-fee(buy)-fee(sell)-Math.floor(sell*0.0015)}
+function watch(){const s=[];(cand?cand.list:[]).forEach(c=>{if(!hidden.includes(c.c))s.push(c.c)});added.forEach(c=>{if(!s.includes(c)&&!hidden.includes(c))s.push(c)});return s}
+
+// ---- 紀律 ----
+function discipline(){const t=trades();let P=0,L=0,open=0;t.forEach(x=>{const p=pnl(x);if(p==null)open++;else{P+=p;if(p<0)L++}});
+ const r=[];if(t.length>=2&&!open)r.push('已做滿2筆');if(P<=-500)r.push('今日虧損達500');if(L>=2)r.push('已虧2筆');if(hm()>=1300)r.push('已過13:00');
+ return{t,P,L,open,reasons:r,lock:r.length>0,full:t.length>=2}}
+function renderDisc(){const d=discipline();$('sN').textContent=d.t.length+'/2';$('sN').className=d.t.length>=2?'up':'';
+ $('sP').textContent=money(d.P);$('sP').className=d.P>0?'up':d.P<0?'dn':'';$('sL').textContent=d.L+'/2';$('sL').className=d.L>=2?'up':'';
+ $('tLog').innerHTML=d.t.length?'<tr><th>代號</th><th>方向</th><th>進</th><th>出</th><th>損益</th><th></th></tr>'+d.t.map((x,i)=>{const p=pnl(x);return`<tr><td>${x.c} ${x.n||''}</td><td>${x.side}</td><td>${x.inp}</td><td>${x.out??'<button data-close="'+i+'">平倉</button>'}</td><td class="${p>0?'up':p<0?'dn':''}">${p==null?'持有中':money(p)}</td><td><button class="x" data-del="${i}">✕</button></td></tr>`}).join(''):'<tr><td class="mut">今天還沒交易</td></tr>';
+ let h='';const m=hm();
+ if(d.lock)h+=`<div class="ban lock">🔒 今日停止交易<div style="font-size:14px;font-weight:400;margin-top:4px">${d.reasons.join('、')}</div></div>`;
+ else if(d.full)h+='<div class="ban warn">2筆已用完，平倉後就停</div>';
+ if(d.open&&m>=1250)h+='<div class="ban lock" style="font-size:18px">⏰ 還有未平倉！13:00前一定要平</div>';
+ else if(m>=1250&&m<1300)h+='<div class="ban warn">⏰ 12:50 準備平倉，不再進場</div>';
+ if(!lastOk||Date.now()-lastOk>30000)h+=lastOk||feedErr?`<div class="ban err">⚠️ 報價${lastOk?'超過30秒沒更新':'抓不到'}，請以券商App為準</div>`:'';
+ $('banners').innerHTML=h;$('fAdd').disabled=d.lock||d.open>0||d.full;$('fAdd').textContent=d.open?'有未平倉，不能加碼':d.lock?'🔒 已鎖':'記錄1張';return d}
+document.addEventListener('click',e=>{const t=trades();
+ if(e.target.dataset.close!=null){const i=+e.target.dataset.close,v=parseFloat(prompt('出場價？'));if(v>0){t[i].out=v;saveTrades(t);renderAll()}}
+ if(e.target.dataset.del!=null){if(confirm('刪除這筆？')){t.splice(+e.target.dataset.del,1);saveTrades(t);renderAll()}}
+ if(e.target.dataset.hide){hidden.push(e.target.dataset.hide);added=added.filter(c=>c!==e.target.dataset.hide);SS('hidden',hidden);SS('added',added);renderAll()}
+ if(e.target.dataset.watch){const c=e.target.dataset.watch;hidden=hidden.filter(x=>x!==c);SS('hidden',hidden);renderAll();poll()}});
+$('fAdd').onclick=()=>{const d=discipline();if(d.lock||d.open||d.full)return;const c=$('fCode').value.trim(),i=parseFloat($('fIn').value),o=parseFloat($('fOut').value);
+ if(!/^\w{4,6}$/.test(c)||!(i>0)){alert('請填代號和進場價');return}
+ const t=trades();t.push({c,n:Q[c]?.n||'',side:$('fSide').value,inp:i,out:o>0?o:null,ts:Date.now()});saveTrades(t);$('fCode').value=$('fIn').value=$('fOut').value='';renderAll()};
+$('addBtn').onclick=()=>{const c=$('addCode').value.trim().toUpperCase();if(!/^\w{4,6}$/.test(c))return;hidden=hidden.filter(x=>x!==c);if(!added.includes(c))added.push(c);SS('added',added);SS('hidden',hidden);$('addCode').value='';renderAll();poll();loadBars(c)};
+$('sDisc').value=cfg.disc;$('sMin').value=cfg.min;$('dDisc').textContent=cfg.disc;$('dMin').textContent=cfg.min;
+$('sSave').onclick=()=>{cfg={disc:parseFloat($('sDisc').value)||0.26,min:parseFloat($('sMin').value)||0};SS('cfg',cfg);$('dDisc').textContent=cfg.disc;$('dMin').textContent=cfg.min;renderAll()};
+$('resetDay').onclick=()=>{if(confirm('清除今天全部交易紀錄？')){saveTrades([]);renderAll()}};
+$('ntf').onclick=()=>{if(!('Notification'in window))return alert('這個瀏覽器不支援通知（iPhone 要先「加入主畫面」）');Notification.requestPermission().then(p=>{$('ntf').textContent=p==='granted'?'🔔 已開':'🔕 未允許'})};
+function notify(msg){try{if(navigator.vibrate)navigator.vibrate([200,100,200]);if(window.Notification&&Notification.permission==='granted')new Notification('當沖助手',{body:msg,tag:msg})}catch(e){}}
+
+// ---- 資料 ----
+let feedErr=0;
+async function poll(){const w=watch();const syms=['TWS:TSE01:INDEX',...w.map(c=>`TWS:${c}:STOCK`)];
+ try{const r=await fetch(`${API}/quote/quotes/${syms.join(',')}?column=K,E,KEY,M,AI&_=${Date.now()}`,{cache:'no-store'});const j=await r.json();
+  (j.data||[]).forEach(q=>{const id=q['200010'];Q[id]={p:q['6'],ch:q['11'],pct:q['56'],h:q['12'],l:q['13'],o:q['19'],y:q['21'],v:+q['800001'],ts:q['200007'],n:q['200009']};if(BARS[id]&&!TEST)liveBar(id)});
+  lastOk=Date.now();feedErr=0}catch(e){feedErr++;console.warn(e)}
+ renderAll()}
+async function loadBars(c){try{const r=await fetch(`${API}/charting/history?resolution=5&symbol=TWS:${c}:STOCK&quote=1&_=${Date.now()}`,{cache:'no-store'});const d=(await r.json()).data;
+  const b=d.t.map((t,i)=>({time:t,open:d.o[i],high:d.h[i],low:d.l[i],close:d.c[i],v:d.v[i]})).sort((a,b)=>a.time-b.time);
+  const day=x=>{const t=tpe(new Date(x*1000));return t.toDateString()};const td=tpe().toDateString();
+  const td2=TEST&&b.length?day(b[b.length-1].time):td;const tb=b.filter(x=>day(x.time)===td2);BARS[c]={bars:tb.length?tb:b,today:tb.length>0};
+  const f=tb.find(x=>{const t=tpe(new Date(x.time*1000));return t.getHours()===9&&t.getMinutes()===0});
+  OR[c]=f&&hm()>=905?{h:f.high,l:f.low}:null;draw(c)}catch(e){console.warn('bars',c,e)}}
+function liveBar(c){const B=BARS[c],q=Q[c];if(!B||!B.today||!q||!q.p||!q.ts)return;const t=Math.floor(q.ts/300)*300;let last=B.bars[B.bars.length-1];
+ if(last&&last.time===t){last.high=Math.max(last.high,q.p);last.low=Math.min(last.low,q.p);last.close=q.p}else if(!last||t>last.time){B.bars.push({time:t,open:q.p,high:q.p,low:q.p,close:q.p})}
+ const s=charts[c];if(s){const b=B.bars[B.bars.length-1];s.series.update({time:b.time+28800,open:b.open,high:b.high,low:b.low,close:b.close})}}
+
+// ---- 畫面 ----
+function sig(c){const q=Q[c],o=OR[c],d=discipline();if(!q)return{e:'⏳',txt:'讀取中',cls:''};
+ if(!o)return{e:'⚪',txt:hm()<905?'等 09:05':'無開盤區間',cls:''};
+ const rng=+(o.h-o.l).toFixed(2),risk=Math.round(rng*1000),tgt=+(o.h+2*rng).toFixed(2);
+ let e='⚪',txt='區間內，等';if(q.p>o.h){e='🟢';txt='站上高點'}else if(q.p<o.l){e='🔴';txt='跌破低點'}if(q.p>=tgt&&rng>0){e='🎯';txt='到1:2目標'}
+ const bad=risk>500||rng<=0;return{e,txt,o,rng,risk,tgt,bad,dim:bad||d.lock}}
+function draw(c){const el=document.getElementById('ch_'+c);if(!el||!BARS[c]||!window.LightweightCharts)return;
+ if(!charts[c]||charts[c].el!==el){const ch=LightweightCharts.createChart(el,{height:150,layout:{background:{color:'transparent'},textColor:'#8b93a1',fontSize:10,attributionLogo:false},grid:{vertLines:{visible:false},horzLines:{color:'#22262f'}},timeScale:{timeVisible:true,secondsVisible:false,borderColor:'#2a2f3a'},rightPriceScale:{borderColor:'#2a2f3a'},handleScroll:false,handleScale:false});
+  const s=ch.addCandlestickSeries({upColor:'#ff4d4f',downColor:'#22c55e',borderVisible:false,wickUpColor:'#ff4d4f',wickDownColor:'#22c55e'});charts[c]={el,ch,series:s,lines:[]}}
+ const C=charts[c];C.series.setData(BARS[c].bars.map(({time,open,high,low,close})=>({time:time+28800,open,high,low,close})));
+ C.lines.forEach(l=>C.series.removePriceLine(l));C.lines=[];const o=OR[c];
+ if(o){const rng=o.h-o.l;[[o.h,'#f5a524','高/進場'],[o.l,'#22c55e','低/停損'],[o.h+2*rng,'#ff4d4f','目標1:2']].forEach(([p,col,t])=>C.lines.push(C.series.createPriceLine({price:p,color:col,lineWidth:1,lineStyle:2,title:t})))}
+ C.ch.timeScale().fitContent()}
+function renderCards(){const w=watch(),box=$('cards');const keep={};
+ w.forEach(c=>{let el=document.getElementById('card_'+c);if(!el){el=document.createElement('div');el.id='card_'+c;el.className='card';el.innerHTML=`<div class="hd"></div><div class="lvw"></div><div class="chart" id="ch_${c}"></div>`;box.appendChild(el);if(!BARS[c])loadBars(c)}
+  keep[c]=1;box.appendChild(el);const q=Q[c]||{},s=sig(c),cd=cand?.list.find(x=>x.c===c);
+  const pc=q.pct>0?'up':q.pct<0?'dn':'';
+  el.querySelector('.hd').innerHTML=`<div class="row"><span class="sig">${s.e}</span><div><b>${c} ${q.n||cd?.n||''}</b> ${cd?.sec?'<span class="b y">★族群</span>':''} ${s.bad&&s.o?`<span class="b r">${s.rng<=0?'無區間':'停損超過500'}</span>`:''}<div class="mut">${s.txt}${BARS[c]&&!BARS[c].today?'（圖為前一日）':''}</div></div><span class="sp"></span><div style="text-align:right"><div class="big ${pc}">${f2(q.p)}</div><div class="${pc}" style="font-size:13px">${q.pct!=null?(q.pct>0?'+':'')+q.pct.toFixed(2)+'%':''} · ${q.v?Math.round(q.v).toLocaleString()+'張':''}</div></div><button class="x" data-hide="${c}">✕</button></div>`;
+  el.querySelector('.lvw').innerHTML=s.o?`<div class="lv"><div><span>進場(高)</span><b>${f2(s.o.h)}</b></div><div><span>停損(低)</span><b class="dn">${f2(s.o.l)}</b></div><div><span>目標1:2</span><b class="up">${f2(s.tgt)}</b></div><div><span>1張風險</span><b class="${s.risk>500?'up':''}">${s.risk.toLocaleString()}</b></div></div>`:'';
+  el.classList.toggle('dim',!!s.dim);
+  if(s.o&&!s.dim&&s.e==='🟢'&&lastSig[c]!=='🟢'&&lastSig[c]!=null)notify(`${c} ${q.n||''} 🟢 站上 ${s.o.h}，停損 ${s.o.l}`);lastSig[c]=s.e});
+ [...box.children].forEach(el=>{const c=el.id.slice(5);if(!keep[c]){el.remove();if(charts[c]){charts[c].ch.remove();delete charts[c]}}});
+ if(!w.length)box.innerHTML='<div class="card mut">還沒有觀察股，從下面候選加入或輸入代號</div>'}
+function renderTop(){const t=tpe();$('clock').textContent=t.toTimeString().slice(0,8)+' 台北';const x=Q['TSE01'];
+ if(x){const ma=cand?.ma20;$('tx').innerHTML=`加權 <b class="${x.pct>0?'up':'dn'}">${f2(x.p)} ${x.pct>0?'+':''}${x.pct?.toFixed(2)}%</b>${ma?(x.p>ma?' <span class="b g">月線上</span>':' <span class="b r">月線下</span>'):''}`}
+ const ts=Math.max(0,...Object.values(Q).filter(q=>q.ts).map(q=>q.ts));const rm=t.getHours()*100+t.getMinutes(),open=!TEST&&rm>=900&&rm<1335&&t.getDay()>0&&t.getDay()<6;
+ if(!lastOk)$('feed').textContent=feedErr?'報價失敗':'連線中…';else if(open){const lag=Math.round(Date.now()/1000-ts);$('feed').textContent='最後成交 '+lag+' 秒前';$('feed').className='b '+(lag<=15?'g':lag<=60?'y':'r')}else{$('feed').textContent='收盤 · 資料 '+(ts?tpe(new Date(ts*1000)).toTimeString().slice(0,5):'');$('feed').className='b gr'}}
+function renderCand(){if(!cand)return;$('cDate').textContent=cand.date+' 資料';const br=cand.breadth,ok=cand.taiex>cand.ma20&&br>50;
+ $('gate').innerHTML=`加權 ${f2(cand.taiex)}（月線 ${f2(cand.ma20)}）· 上漲家數 ${br}% · ${ok?'<span class="b g">順風</span>':'<span class="b r">逆風，少做</span>'}`;
+ const w=watch();$('cTab').innerHTML='<tr><th>股票</th><th>收</th><th>漲幅</th><th>量比</th><th></th></tr>'+cand.list.map(x=>`<tr><td>${x.c} ${x.n} ${x.sec?'★':''}${x.lim?' <span class="b r">漲停</span>':''}</td><td>${x.p}</td><td class="up">+${x.ch}%</td><td>${x.vr}x</td><td>${w.includes(x.c)?'<span class="mut">觀察中</span>':`<button data-watch="${x.c}">＋</button>`}</td></tr>`).join('')}
+function renderAll(){renderTop();renderDisc();renderCards();renderCand()}
+
+// ---- 啟動 ----
+let warned={};
+async function init(){try{cand=await (await fetch('candidates.json?_='+Date.now(),{cache:'no-store'})).json()}catch(e){cand={list:[]}}
+ renderAll();poll();setInterval(poll,5000);setInterval(renderTop,1000);
+ let i=0;setInterval(()=>{const w=watch();if(!w.length)return;loadBars(w[i++%w.length])},4000); // 每檔約 40 秒重抓一次5分K
+ setInterval(()=>{const m=hm(),k=today()+m;if(m===1250&&!warned[k]){warned[k]=1;notify('12:50 準備平倉，13:00 前出場')}if(m===905||m===906){watch().forEach(loadBars)}},20000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden){poll();watch().forEach(loadBars)}});
+ try{if(navigator.wakeLock)await navigator.wakeLock.request('screen')}catch(e){}}
+init();
+</script></body></html>
