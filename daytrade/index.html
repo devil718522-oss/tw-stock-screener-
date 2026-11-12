@@ -12,12 +12,12 @@ h2{font-size:16px;margin:14px 2px 6px}.mut{color:var(--mut);font-size:12px}
 .b{display:inline-block;padding:1px 7px;border-radius:999px;font-size:12px;font-weight:600;background:#2a2f3a}
 .b.r{background:#4a1719;color:#ff8a8c}.b.g{background:#123a22;color:#5ee38c}.b.y{background:#3d300e;color:#f5c451}.b.gr{background:#2a2f3a;color:#9aa3b2}
 .up{color:var(--up)}.dn{color:var(--dn)}.big{font-size:22px;font-weight:700}
-.sig{font-size:26px;line-height:1}.dim{opacity:.38;filter:grayscale(1)}
+.sig{font-size:26px;line-height:1}.card.wb{border-color:#7a5a12;background:#1c1a16}
 .lv{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px;text-align:center}
 .lv div{background:#11141a;border-radius:8px;padding:4px 0}.lv b{display:block;font-size:15px}.lv span{font-size:11px;color:var(--mut)}
 .chart{height:150px;margin-top:6px}
-.ban{border-radius:12px;padding:12px;margin:8px 0;font-weight:700;text-align:center}
-.ban.lock{background:#7f1d1d;color:#fff;font-size:22px}.ban.warn{background:#78350f;color:#fff;font-size:17px}.ban.err{background:#3b1d1d;color:#ffb4b4;font-size:14px}
+.ban{border-radius:10px;padding:6px 10px;margin:4px 0;font-weight:700;text-align:center}
+.ban.lock{background:#7f1d1d;color:#fff;font-size:14px}.ban{text-align:left}.ban.warn{background:#78350f;color:#fff;font-size:14px}.ban.err{background:#3b1d1d;color:#ffb4b4;font-size:14px}
 button,input,select{font:inherit;color:var(--tx);background:#232733;border:1px solid var(--line);border-radius:8px;padding:7px 10px}
 button.p{background:#2563eb;border-color:#2563eb}button.x{padding:2px 8px;background:none;border:none;color:var(--mut)}
 input{width:90px}input.w{width:72px}
@@ -32,7 +32,7 @@ details p,details li{color:#c4c9d2;font-size:13px}
 
 <h2>🧭 紀律</h2>
 <div class="card"><div class="stat"><div><span class="mut">今日筆數</span><b id="sN">0/2</b></div><div><span class="mut">今日損益</span><b id="sP">0</b></div><div><span class="mut">虧損筆數</span><b id="sL">0/2</b></div></div>
-<div class="row" style="margin-top:8px"><select id="fSide"><option>多</option><option>空</option></select><input id="fCode" placeholder="代號" inputmode="numeric" class="w"><input id="fIn" placeholder="進場價" inputmode="decimal" class="w"><input id="fOut" placeholder="出場價" inputmode="decimal" class="w"><button class="p" id="fAdd">記錄1張</button></div>
+<div class="row" style="margin-top:8px"><select id="fSide"><option>多</option><option>空</option></select><input id="fCode" placeholder="代號" inputmode="numeric" class="w"><input id="fQty" value="1" inputmode="numeric" style="width:44px" title="張數"><input id="fIn" placeholder="進場價" inputmode="decimal" class="w"><input id="fOut" placeholder="出場價" inputmode="decimal" class="w"><button class="p" id="fAdd">記錄</button></div>
 <div class="mut" style="margin-top:4px">先填進場價記一筆；出場後在下面按「平倉」補出場價。</div>
 <table id="tLog" style="margin-top:6px"></table></div>
 
@@ -46,9 +46,9 @@ details p,details li{color:#c4c9d2;font-size:13px}
 <details><summary>📖 說明</summary>
 <ul>
 <li><b>🟢</b> 現價站上第一根5分K高點（進場訊號）。<b>🔴</b> 跌破第一根低點。<b>⚪</b> 還在區間內，等。<b>🎯</b> 到達 1:2 目標。</li>
-<li>進場＝第一根高點，停損＝第一根低點，目標＝進場＋2×(高−低)。「1張風險」＝(高−低)×1000 元。超過 500 元會變灰色、標「停損超過500」，不做。</li>
+<li>進場＝第一根高點，停損＝第一根低點，目標＝進場＋2×(高−低)。「1張風險」＝(高−低)×1000 元。超過 500 元會標「停損超過500」（卡片變黃框），超過你的規則。</li>
 <li>09:05 以前還沒有區間，顯示「等 09:05」。</li>
-<li>紀律：一次最多1張、一天最多2筆、單日虧500或虧2筆就鎖、不攤平（有未平倉時不能再進）、13:00前平倉。12:50 會跳提醒。觸發任何一條就整頁鎖住🔒。</li>
+<li>紀律提醒（只提醒，要不要做由你決定）：一次最多1張、一天最多2筆、單日虧500或虧2筆就停、不攤平、13:00前平倉，12:50 跳提醒。大盤在月線下或上漲家數不到5成會提醒逆風。</li>
 <li>手續費＝成交金額×0.1425%×<span id="dDisc"></span>（買賣各一次，最低<span id="dMin"></span>元），當沖稅0.15%（賣出時）。實際以券商對帳單為準。</li>
 <li>候選股：前一天上漲、收在當天高檔、量≥5日均量1.5倍且≥3000張，強勢族群（★）優先。每晚更新。標「漲停」的開盤常跳空，區間不好抓。</li>
 <li>報價來源：鉅亨網（cnyes）公開報價，每5秒更新；上方徽章顯示「最後成交距今幾秒」。下單一定要看券商App的即時價。手機螢幕關掉或切到別的App時，瀏覽器會暫停更新，回來會自動補抓。</li>
@@ -73,31 +73,38 @@ let cand=null, Q={}, BARS={}, OR={}, charts={}, lastSig={}, lastOk=0, hidden=LS(
 function trades(){const a=LS('trades')||{};return a[today()]||[]}
 function saveTrades(t){const a=LS('trades')||{};a[today()]=t;Object.keys(a).sort().slice(0,-30).forEach(k=>delete a[k]);SS('trades',a)}
 function fee(amt){return Math.max(cfg.min,Math.floor(amt*0.001425*cfg.disc))}
-function pnl(t){if(t.out==null)return null;const ent=t.inp*1000,ex=t.out*1000;const buy=t.side==='多'?ent:ex,sell=t.side==='多'?ex:ent;return sell-buy-fee(buy)-fee(sell)-Math.floor(sell*0.0015)}
+function pnl(t){if(t.out==null)return null;const q=t.q||1,ent=t.inp*1000*q,ex=t.out*1000*q;const buy=t.side==='多'?ent:ex,sell=t.side==='多'?ex:ent;return sell-buy-fee(buy)-fee(sell)-Math.floor(sell*0.0015)}
 function watch(){const s=[];(cand?cand.list:[]).forEach(c=>{if(!hidden.includes(c.c))s.push(c.c)});added.forEach(c=>{if(!s.includes(c)&&!hidden.includes(c))s.push(c)});return s}
 
 // ---- 紀律 ----
-function discipline(){const t=trades();let P=0,L=0,open=0;t.forEach(x=>{const p=pnl(x);if(p==null)open++;else{P+=p;if(p<0)L++}});
- const r=[];if(t.length>=2&&!open)r.push('已做滿2筆');if(P<=-500)r.push('今日虧損達500');if(L>=2)r.push('已虧2筆');if(hm()>=1300)r.push('已過13:00');
- return{t,P,L,open,reasons:r,lock:r.length>0,full:t.length>=2}}
+function discipline(){const t=trades();let P=0,L=0,open=0,big=0;t.forEach(x=>{const p=pnl(x);if((x.q||1)>1)big++;if(p==null)open++;else{P+=p;if(p<0)L++}});
+ const w=[];const m=hm();
+ if(cand&&cand.taiex&&(cand.taiex<cand.ma20||cand.breadth<50))w.push(['y',`🌧️ 大盤逆風：${cand.taiex<cand.ma20?'加權在月線下':''}${cand.taiex<cand.ma20&&cand.breadth<50?'、':''}${cand.breadth<50?'上漲家數 '+cand.breadth+'%':''}`]);
+ if(t.length>2)w.push(['r',`⚠️ 今天已做 ${t.length} 筆，超過 2 筆`]);else if(t.length===2)w.push(['y','✋ 今天 2 筆已用完']);
+ if(P<=-500)w.push(['r',`⚠️ 今日虧 ${Math.round(-P)}，已到 −500 停損線`]);
+ if(L>=2)w.push(['r','⚠️ 已虧 2 筆，規則是停手']);
+ if(big)w.push(['r','⚠️ 有超過 1 張的單']);
+ if(t.some(x=>x.avg))w.push(['r','⚠️ 有攤平（虧損中再加碼）']);
+ if(open&&m>=1250)w.push(['r','⏰ 還有未平倉！13:00 前要平']);else if(m>=1250&&m<1300)w.push(['y','⏰ 12:50 準備平倉，不再進場']);else if(m>=1300&&m<1335)w.push(['y','⏰ 已過 13:00，規則是不再進場']);
+ return{t,P,L,open,w}}
 function renderDisc(){const d=discipline();$('sN').textContent=d.t.length+'/2';$('sN').className=d.t.length>=2?'up':'';
  $('sP').textContent=money(d.P);$('sP').className=d.P>0?'up':d.P<0?'dn':'';$('sL').textContent=d.L+'/2';$('sL').className=d.L>=2?'up':'';
- $('tLog').innerHTML=d.t.length?'<tr><th>代號</th><th>方向</th><th>進</th><th>出</th><th>損益</th><th></th></tr>'+d.t.map((x,i)=>{const p=pnl(x);return`<tr><td>${x.c} ${x.n||''}</td><td>${x.side}</td><td>${x.inp}</td><td>${x.out??'<button data-close="'+i+'">平倉</button>'}</td><td class="${p>0?'up':p<0?'dn':''}">${p==null?'持有中':money(p)}</td><td><button class="x" data-del="${i}">✕</button></td></tr>`}).join(''):'<tr><td class="mut">今天還沒交易</td></tr>';
- let h='';const m=hm();
- if(d.lock)h+=`<div class="ban lock">🔒 今日停止交易<div style="font-size:14px;font-weight:400;margin-top:4px">${d.reasons.join('、')}</div></div>`;
- else if(d.full)h+='<div class="ban warn">2筆已用完，平倉後就停</div>';
- if(d.open&&m>=1250)h+='<div class="ban lock" style="font-size:18px">⏰ 還有未平倉！13:00前一定要平</div>';
- else if(m>=1250&&m<1300)h+='<div class="ban warn">⏰ 12:50 準備平倉，不再進場</div>';
+ $('tLog').innerHTML=d.t.length?'<tr><th>代號</th><th>方向</th><th>張</th><th>進</th><th>出</th><th>損益</th><th></th></tr>'+d.t.map((x,i)=>{const p=pnl(x);return`<tr><td>${x.c} ${x.n||''}${x.avg?' <span class="b r">攤平</span>':''}</td><td>${x.side}</td><td class="${(x.q||1)>1?'up':''}">${x.q||1}</td><td>${x.inp}</td><td>${x.out??'<button data-close="'+i+'">平倉</button>'}</td><td class="${p>0?'up':p<0?'dn':''}">${p==null?'持有中':money(p)}</td><td><button class="x" data-del="${i}">✕</button></td></tr>`}).join(''):'<tr><td class="mut">今天還沒交易</td></tr>';
+ let h=d.w.map(([c,t])=>`<div class="ban ${c==='r'?'lock':'warn'}">${t}</div>`).join('');
  if(!lastOk||Date.now()-lastOk>30000)h+=lastOk||feedErr?`<div class="ban err">⚠️ 報價${lastOk?'超過30秒沒更新':'抓不到'}，請以券商App為準</div>`:'';
- $('banners').innerHTML=h;$('fAdd').disabled=d.lock||d.open>0||d.full;$('fAdd').textContent=d.open?'有未平倉，不能加碼':d.lock?'🔒 已鎖':'記錄1張';return d}
+ $('banners').innerHTML=h;return d}
 document.addEventListener('click',e=>{const t=trades();
  if(e.target.dataset.close!=null){const i=+e.target.dataset.close,v=parseFloat(prompt('出場價？'));if(v>0){t[i].out=v;saveTrades(t);renderAll()}}
  if(e.target.dataset.del!=null){if(confirm('刪除這筆？')){t.splice(+e.target.dataset.del,1);saveTrades(t);renderAll()}}
  if(e.target.dataset.hide){hidden.push(e.target.dataset.hide);added=added.filter(c=>c!==e.target.dataset.hide);SS('hidden',hidden);SS('added',added);renderAll()}
  if(e.target.dataset.watch){const c=e.target.dataset.watch;hidden=hidden.filter(x=>x!==c);SS('hidden',hidden);renderAll();poll()}});
-$('fAdd').onclick=()=>{const d=discipline();if(d.lock||d.open||d.full)return;const c=$('fCode').value.trim(),i=parseFloat($('fIn').value),o=parseFloat($('fOut').value);
+$('fAdd').onclick=()=>{const c=$('fCode').value.trim().toUpperCase(),i=parseFloat($('fIn').value),o=parseFloat($('fOut').value),q=parseInt($('fQty').value)||1,side=$('fSide').value;
  if(!/^\w{4,6}$/.test(c)||!(i>0)){alert('請填代號和進場價');return}
- const t=trades();t.push({c,n:Q[c]?.n||'',side:$('fSide').value,inp:i,out:o>0?o:null,ts:Date.now()});saveTrades(t);$('fCode').value=$('fIn').value=$('fOut').value='';renderAll()};
+ const t=trades();const op=t.find(x=>x.c===c&&x.side===side&&x.out==null);let avg=false;
+ if(op&&(side==='多'?i<op.inp:i>op.inp)){avg=true;if(!confirm('⚠️ 這是攤平（虧損中加碼），你的規則是不攤平。還是要記錄嗎？'))return}
+ if(q>1&&!confirm(`⚠️ ${q} 張超過你的 1 張上限。還是要記錄嗎？`))return;
+ if(t.length>=2&&!confirm(`⚠️ 今天已做 ${t.length} 筆，這是第 ${t.length+1} 筆。還是要記錄嗎？`))return;
+ t.push({c,n:Q[c]?.n||'',side,q,inp:i,out:o>0?o:null,avg,ts:Date.now()});saveTrades(t);$('fCode').value=$('fIn').value=$('fOut').value='';$('fQty').value=1;renderAll()};
 $('addBtn').onclick=()=>{const c=$('addCode').value.trim().toUpperCase();if(!/^\w{4,6}$/.test(c))return;hidden=hidden.filter(x=>x!==c);if(!added.includes(c))added.push(c);SS('added',added);SS('hidden',hidden);$('addCode').value='';renderAll();poll();loadBars(c)};
 $('sDisc').value=cfg.disc;$('sMin').value=cfg.min;$('dDisc').textContent=cfg.disc;$('dMin').textContent=cfg.min;
 $('sSave').onclick=()=>{cfg={disc:parseFloat($('sDisc').value)||0.26,min:parseFloat($('sMin').value)||0};SS('cfg',cfg);$('dDisc').textContent=cfg.disc;$('dMin').textContent=cfg.min;renderAll()};
@@ -123,11 +130,11 @@ function liveBar(c){const B=BARS[c],q=Q[c];if(!B||!B.today||!q||!q.p||!q.ts)retu
  const s=charts[c];if(s){const b=B.bars[B.bars.length-1];s.series.update({time:b.time+28800,open:b.open,high:b.high,low:b.low,close:b.close})}}
 
 // ---- 畫面 ----
-function sig(c){const q=Q[c],o=OR[c],d=discipline();if(!q)return{e:'⏳',txt:'讀取中',cls:''};
+function sig(c){const q=Q[c],o=OR[c];if(!q)return{e:'⏳',txt:'讀取中',cls:''};
  if(!o)return{e:'⚪',txt:hm()<905?'等 09:05':'無開盤區間',cls:''};
  const rng=+(o.h-o.l).toFixed(2),risk=Math.round(rng*1000),tgt=+(o.h+2*rng).toFixed(2);
  let e='⚪',txt='區間內，等';if(q.p>o.h){e='🟢';txt='站上高點'}else if(q.p<o.l){e='🔴';txt='跌破低點'}if(q.p>=tgt&&rng>0){e='🎯';txt='到1:2目標'}
- const bad=risk>500||rng<=0;return{e,txt,o,rng,risk,tgt,bad,dim:bad||d.lock}}
+ const bad=risk>500||rng<=0;return{e,txt,o,rng,risk,tgt,bad}}
 function draw(c){const el=document.getElementById('ch_'+c);if(!el||!BARS[c]||!window.LightweightCharts)return;
  if(!charts[c]||charts[c].el!==el){const ch=LightweightCharts.createChart(el,{height:150,layout:{background:{color:'transparent'},textColor:'#8b93a1',fontSize:10,attributionLogo:false},grid:{vertLines:{visible:false},horzLines:{color:'#22262f'}},timeScale:{timeVisible:true,secondsVisible:false,borderColor:'#2a2f3a'},rightPriceScale:{borderColor:'#2a2f3a'},handleScroll:false,handleScale:false});
   const s=ch.addCandlestickSeries({upColor:'#ff4d4f',downColor:'#22c55e',borderVisible:false,wickUpColor:'#ff4d4f',wickDownColor:'#22c55e'});charts[c]={el,ch,series:s,lines:[]}}
@@ -141,8 +148,8 @@ function renderCards(){const w=watch(),box=$('cards');const keep={};
   const pc=q.pct>0?'up':q.pct<0?'dn':'';
   el.querySelector('.hd').innerHTML=`<div class="row"><span class="sig">${s.e}</span><div><b>${c} ${q.n||cd?.n||''}</b> ${cd?.sec?'<span class="b y">★族群</span>':''} ${s.bad&&s.o?`<span class="b r">${s.rng<=0?'無區間':'停損超過500'}</span>`:''}<div class="mut">${s.txt}${BARS[c]&&!BARS[c].today?'（圖為前一日）':''}</div></div><span class="sp"></span><div style="text-align:right"><div class="big ${pc}">${f2(q.p)}</div><div class="${pc}" style="font-size:13px">${q.pct!=null?(q.pct>0?'+':'')+q.pct.toFixed(2)+'%':''} · ${q.v?Math.round(q.v).toLocaleString()+'張':''}</div></div><button class="x" data-hide="${c}">✕</button></div>`;
   el.querySelector('.lvw').innerHTML=s.o?`<div class="lv"><div><span>進場(高)</span><b>${f2(s.o.h)}</b></div><div><span>停損(低)</span><b class="dn">${f2(s.o.l)}</b></div><div><span>目標1:2</span><b class="up">${f2(s.tgt)}</b></div><div><span>1張風險</span><b class="${s.risk>500?'up':''}">${s.risk.toLocaleString()}</b></div></div>`:'';
-  el.classList.toggle('dim',!!s.dim);
-  if(s.o&&!s.dim&&s.e==='🟢'&&lastSig[c]!=='🟢'&&lastSig[c]!=null)notify(`${c} ${q.n||''} 🟢 站上 ${s.o.h}，停損 ${s.o.l}`);lastSig[c]=s.e});
+  el.classList.toggle('wb',!!s.bad);
+  if(s.o&&s.e==='🟢'&&lastSig[c]!=='🟢'&&lastSig[c]!=null)notify(`${c} ${q.n||''} 🟢 站上 ${s.o.h}，停損 ${s.o.l}${s.bad?'（停損超過500）':''}`);lastSig[c]=s.e});
  [...box.children].forEach(el=>{const c=el.id.slice(5);if(!keep[c]){el.remove();if(charts[c]){charts[c].ch.remove();delete charts[c]}}});
  if(!w.length)box.innerHTML='<div class="card mut">還沒有觀察股，從下面候選加入或輸入代號</div>'}
 function renderTop(){const t=tpe();$('clock').textContent=t.toTimeString().slice(0,8)+' 台北';const x=Q['TSE01'];
