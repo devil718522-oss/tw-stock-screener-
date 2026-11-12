@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant-TW"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f1115"><title>當沖助手</title>
+<meta name="theme-color" content="#0f1115"><title>史塔克交易助手</title>
 <style>
 :root{--bg:#0f1115;--card:#181b22;--line:#2a2f3a;--tx:#e8eaed;--mut:#8b93a1;--up:#ff4d4f;--dn:#22c55e;--warn:#f5a524}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 -apple-system,"PingFang TC","Noto Sans TC",sans-serif;padding:8px 8px 60px}
@@ -26,7 +26,7 @@ details{background:var(--card);border:1px solid var(--line);border-radius:12px;p
 details p,details li{color:#c4c9d2;font-size:13px}
 .stat{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center}.stat div{background:#11141a;border-radius:10px;padding:6px}.stat b{display:block;font-size:20px}
 </style></head><body>
-<div class="top"><div class="row"><b>⚡ 當沖助手</b><span id="clock" class="mut"></span><span class="sp"></span><a href="../" class="mut">選股網站</a></div>
+<div class="top"><div class="row"><b>⚡ 史塔克交易助手</b><span id="clock" class="mut"></span><span class="sp"></span><a href="../" class="mut">選股網站</a></div>
 <div class="row" style="margin-top:4px"><span id="tx" class="mut">加權 —</span><span class="sp"></span><span id="feed" class="b gr">連線中…</span></div></div>
 <div id="banners"></div>
 
@@ -110,7 +110,7 @@ $('sDisc').value=cfg.disc;$('sMin').value=cfg.min;$('dDisc').textContent=cfg.dis
 $('sSave').onclick=()=>{cfg={disc:parseFloat($('sDisc').value)||0.26,min:parseFloat($('sMin').value)||0};SS('cfg',cfg);$('dDisc').textContent=cfg.disc;$('dMin').textContent=cfg.min;renderAll()};
 $('resetDay').onclick=()=>{if(confirm('清除今天全部交易紀錄？')){saveTrades([]);renderAll()}};
 $('ntf').onclick=()=>{if(!('Notification'in window))return alert('這個瀏覽器不支援通知（iPhone 要先「加入主畫面」）');Notification.requestPermission().then(p=>{$('ntf').textContent=p==='granted'?'🔔 已開':'🔕 未允許'})};
-function notify(msg){try{if(navigator.vibrate)navigator.vibrate([200,100,200]);if(window.Notification&&Notification.permission==='granted')new Notification('當沖助手',{body:msg,tag:msg})}catch(e){}}
+function notify(msg){try{if(navigator.vibrate)navigator.vibrate([200,100,200]);if(window.Notification&&Notification.permission==='granted')new Notification('史塔克交易助手',{body:msg,tag:msg})}catch(e){}}
 
 // ---- 資料 ----
 let feedErr=0;
