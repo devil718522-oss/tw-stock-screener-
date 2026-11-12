@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant-TW"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f1115"><title>史塔克交易助手</title>
+<link rel="icon" href="data:,"><meta name="theme-color" content="#0f1115"><title>史塔克交易助手</title>
 <style>
 :root{--bg:#0f1115;--card:#181b22;--line:#2a2f3a;--tx:#e8eaed;--mut:#8b93a1;--up:#ff4d4f;--dn:#22c55e;--warn:#f5a524}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 -apple-system,"PingFang TC","Noto Sans TC",sans-serif;padding:8px 8px 60px}
@@ -25,10 +25,24 @@ table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:5px 3px;b
 details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:8px 0}summary{font-weight:600}
 details p,details li{color:#c4c9d2;font-size:13px}
 .stat{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center}.stat div{background:#11141a;border-radius:10px;padding:6px}.stat b{display:block;font-size:20px}
+.tabs{display:flex;gap:6px;margin:6px 0}.tabs button{flex:1;font-weight:700}.tabs button.on{background:#0e7490;border-color:#0e7490;color:#fff}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:4px 0}.chips button{padding:4px 10px;border-radius:999px;font-size:13px;white-space:nowrap}
+.tf{display:flex;background:#11141a;border-radius:10px;padding:3px;margin:6px 0}.tf button{flex:1;border:none;background:none;padding:6px 0;color:var(--mut)}.tf button.on{background:#232733;color:#22d3ee;font-weight:700}
+.rhd{display:flex;align-items:flex-end;gap:8px}.rhd .px{font-size:30px;font-weight:800;line-height:1}
+#rChart{height:330px;margin-top:6px}
+.lg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11px;color:var(--mut);margin-top:4px}.lg i{display:inline-block;width:16px;height:0;border-top:2px solid;vertical-align:middle;margin-right:3px}
+.car{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 0 8px}
+.pc{flex:0 0 82%;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}.pc.on{border-color:#22d3ee;box-shadow:0 0 0 1px #22d3ee inset}
+.pc .nm{font-size:17px;font-weight:800}.pc .ex{font-size:13px;color:#c4c9d2;margin-top:6px;line-height:1.5}
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:6px;text-align:center}.pg div{background:#11141a;border-radius:8px;padding:4px 0}.pg span{font-size:11px;color:var(--mut);display:block}.pg b{font-size:15px}
+.b.c{background:#083344;color:#22d3ee}.b.o{background:#431407;color:#fb923c}.b.bl{background:#172554;color:#93c5fd}
+.bigbtn{background:#0e7490;border-color:#0e7490;font-weight:800;padding:8px 18px}
+.pb{display:inline-block;margin:4px 4px 0 0;padding:2px 8px;border-radius:8px;font-size:12px;background:#11141a;border:1px solid #164e63;color:#a5f3fc;cursor:pointer}
 </style></head><body>
 <div class="top"><div class="row"><b>⚡ 史塔克交易助手</b><span id="clock" class="mut"></span><span class="sp"></span><a href="../" class="mut">選股網站</a></div>
 <div class="row" style="margin-top:4px"><span id="tx" class="mut">加權 —</span><span class="sp"></span><span id="feed" class="b gr">連線中…</span></div></div>
-<div id="banners"></div>
+<div class="tabs"><button id="tbDT" class="on">⚡ 當沖</button><button id="tbRD">📐 型態雷達</button></div>
+<div id="secDT"><div id="banners"></div>
 
 <h2>🧭 紀律</h2>
 <div class="card"><div class="stat"><div><span class="mut">今日筆數</span><b id="sN">0/2</b></div><div><span class="mut">今日損益</span><b id="sP">0</b></div><div><span class="mut">虧損筆數</span><b id="sL">0/2</b></div></div>
@@ -43,6 +57,21 @@ details p,details li{color:#c4c9d2;font-size:13px}
 <h2>🌅 盤前候選 <span id="cDate" class="mut"></span></h2>
 <div class="card"><div id="gate" class="mut"></div><table id="cTab"></table></div>
 
+</div>
+<div id="secRD" style="display:none">
+<div class="row"><input id="rCode" placeholder="輸入代號" inputmode="numeric" style="flex:1;font-size:17px"><button id="rGo" class="bigbtn">🔍 掃描</button></div>
+<div class="chips" id="rChips"></div>
+<div class="tf" id="rTf"><button data-tf="D" class="on">日K</button><button data-tf="60">60分</button><button data-tf="30">30分</button><button data-tf="15">15分</button><button data-tf="5">5分</button></div>
+<div class="card" style="padding:10px 8px">
+<div class="rhd"><div><div><b id="rName" style="font-size:17px">—</b> <span id="rMkt" class="b gr"></span></div><div class="mut" id="rTime"></div></div><span class="sp"></span><div style="text-align:right"><div class="px" id="rPx">—</div><div id="rCh"></div></div></div>
+<div id="rChart"></div>
+<div class="lg"><span><i style="border-color:#22d3ee"></i>型態線</span><span><i style="border-color:#fff"></i>頸線</span><span><i style="border-color:#3b82f6;border-top-style:dashed"></i>確認(突破價)</span><span><i style="border-color:#a855f7;border-top-style:dotted"></i>失效(停損)</span><span><i style="border-color:#fb923c;border-top-style:dashed"></i>目標</span><span>▲突破 ▼跌破</span></div>
+<div id="rNote" class="mut" style="margin-top:4px"></div>
+</div>
+<div class="row"><b>型態辨識 <span id="rN">0</span> 組</b><span class="sp"></span><span class="mut" id="rUpd"></span></div>
+<div class="car" id="rCar"></div>
+</div>
+
 <details><summary>📖 說明</summary>
 <ul>
 <li><b>🟢</b> 現價站上第一根5分K高點（進場訊號）。<b>🔴</b> 跌破第一根低點。<b>⚪</b> 還在區間內，等。<b>🎯</b> 到達 1:2 目標。</li>
@@ -53,11 +82,20 @@ details p,details li{color:#c4c9d2;font-size:13px}
 <li>候選股：前一天上漲、收在當天高檔、量≥5日均量1.5倍且≥3000張，強勢族群（★）優先。每晚更新。標「漲停」的開盤常跳空，區間不好抓。</li>
 <li>報價來源：鉅亨網（cnyes）公開報價，每5秒更新；上方徽章顯示「最後成交距今幾秒」。下單一定要看券商App的即時價。手機螢幕關掉或切到別的App時，瀏覽器會暫停更新，回來會自動補抓。</li>
 <li>點卡片右上 ✕ 可移除；資料都存在這支手機的瀏覽器裡。</li>
+<li><b>📐 型態雷達</b>：輸入代號按掃描，或點熱門股。上面切換 日K／60分／30分／15分／5分。左右滑下面的型態卡片，點一張就把那個型態畫在圖上。當沖卡片上的「日K／5分」小標籤也可以點，會跳到雷達。</li>
+<li><b>圖上的線</b>：青色＝型態的轉折點連線（底1、頸、底2…）；白色＝頸線；藍色虛線「確認」＝收盤要站上（或跌破）這價才算成立；紫色點線「失效」＝停損價，到這裡型態就不算了；橘色虛線「目標」＝量度目標價；▲突破／▼跌破＝成立的那根K棒。</li>
+<li><b>狀態</b>：成形中＝形狀有了但還沒突破，先別追；已確認＝收盤已突破（偏多的還要量比前20根平均大1.2倍以上，盤中1.3倍）；突破量不足＝有突破但量太小，容易假突破；已達標＝已到目標價，不追；失敗＝突破後又跑回去了。</li>
+<li><b>目標價怎麼算（量度漲幅）</b>：型態有多高，突破後就再走多遠。W底／頭肩底＝頸線＋(頸線−最低點)；M頭／頭肩頂＝頸線−(最高點−頸線)；箱型＝箱頂＋箱子高度（跌破則箱底−高度）；三角形＝突破點＋三角形最寬處高度；旗形＝突破點＋旗桿長度。這是教科書算法，常常走不到，到一半先減碼也合理。</li>
+<li><b>停損怎麼來</b>：W底用右邊那個底、頭肩底用右肩、M頭用右邊的頭、箱型用箱子中線、三角用最近的低點（或高點）、旗形用旗子的另一邊。跌破（漲過）就代表型態失敗。</li>
+<li><b>信心 %</b>：不是勝率，也沒有回測過，只是規則分數（滿分100）：①對稱度30分（兩個底／兩個肩高度越接近越高）②突破量30分（突破那根的量是前20根平均的2倍以上給滿分；還沒突破＝0分）③深度20分（型態夠深、不是小波動）④時間20分（花越久形成越可靠）。失敗的型態最多15分。所以「成形中」的分數本來就比較低。</li>
+<li><b>型態清單</b>：W雙底、M雙頂、頭肩底、頭肩頂、箱型整理／突破／跌破、對稱三角、上升三角、下降三角、三角突破／跌破、上升旗形、下降旗形、多頭趨勢（頭頭高底底高）、空頭趨勢。5分K只找W底、M頭、箱型（雜訊多，條件更嚴）。</li>
+<li><b>資料</b>：日K、5分K、今天的K棒都是鉅亨網即時抓。15／30／60分的「前幾天」是每晚預先存好的（候選股＋熱門股，來源 Yahoo），今天的部分用5分K即時組起來；沒預存的股票只能看今天。</li>
 </ul>
 <div class="row"><span class="mut">手續費折數</span><input id="sDisc" class="w" inputmode="decimal"><span class="mut">最低手續費</span><input id="sMin" class="w" inputmode="numeric"><button id="sSave">存</button><button id="resetDay">清除今日紀錄</button></div>
 </details>
 
 <script src="lwc.js"></script>
+<script src="pat.js"></script>
 <script>
 const API='https://ws.api.cnyes.com/ws/api/v1';
 const LS=k=>JSON.parse(localStorage.getItem('dt_'+k)||'null'), SS=(k,v)=>localStorage.setItem('dt_'+k,JSON.stringify(v));
@@ -66,7 +104,7 @@ const TEST=/test=1/.test(location.search);
 const tpe=(d=new Date())=>new Date(d.getTime()+(d.getTimezoneOffset()+480)*60000); // 台北時間
 const today=()=>{const t=tpe();return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')};
 const hm=()=>{if(TEST)return 1000;const t=tpe();return t.getHours()*100+t.getMinutes()};
-const f2=x=>x==null||isNaN(x)?'—':(+x).toFixed(x>=1000?0:2).replace(/\.?0+$/,'');
+const f2=x=>{if(x==null||isNaN(x))return'—';const s=(+x).toFixed(Math.abs(x)>=1000?0:2);return s.includes('.')?s.replace(/\.?0+$/,''):s};
 const money=x=>(x>0?'+':'')+Math.round(x).toLocaleString();
 let cfg=Object.assign({disc:0.26,min:1},LS('cfg')||{});
 let cand=null, Q={}, BARS={}, OR={}, charts={}, lastSig={}, lastOk=0, hidden=LS('hidden')||[], added=LS('added')||[];
@@ -124,7 +162,7 @@ async function loadBars(c){try{const r=await fetch(`${API}/charting/history?reso
   const day=x=>{const t=tpe(new Date(x*1000));return t.toDateString()};const td=tpe().toDateString();
   const td2=TEST&&b.length?day(b[b.length-1].time):td;const tb=b.filter(x=>day(x.time)===td2);BARS[c]={bars:tb.length?tb:b,today:tb.length>0};
   const f=tb.find(x=>{const t=tpe(new Date(x.time*1000));return t.getHours()===9&&t.getMinutes()===0});
-  OR[c]=f&&hm()>=905?{h:f.high,l:f.low}:null;draw(c)}catch(e){console.warn('bars',c,e)}}
+  OR[c]=f&&hm()>=905?{h:f.high,l:f.low}:null;patBadges(c);draw(c)}catch(e){console.warn('bars',c,e)}}
 function liveBar(c){const B=BARS[c],q=Q[c];if(!B||!B.today||!q||!q.p||!q.ts)return;const t=Math.floor(q.ts/300)*300;let last=B.bars[B.bars.length-1];
  if(last&&last.time===t){last.high=Math.max(last.high,q.p);last.low=Math.min(last.low,q.p);last.close=q.p}else if(!last||t>last.time){B.bars.push({time:t,open:q.p,high:q.p,low:q.p,close:q.p})}
  const s=charts[c];if(s){const b=B.bars[B.bars.length-1];s.series.update({time:b.time+28800,open:b.open,high:b.high,low:b.low,close:b.close})}}
@@ -141,15 +179,16 @@ function draw(c){const el=document.getElementById('ch_'+c);if(!el||!BARS[c]||!wi
  const C=charts[c];C.series.setData(BARS[c].bars.map(({time,open,high,low,close})=>({time:time+28800,open,high,low,close})));
  C.lines.forEach(l=>C.series.removePriceLine(l));C.lines=[];const o=OR[c];
  if(o){const rng=o.h-o.l;[[o.h,'#f5a524','高/進場'],[o.l,'#22c55e','低/停損'],[o.h+2*rng,'#ff4d4f','目標1:2']].forEach(([p,col,t])=>C.lines.push(C.series.createPriceLine({price:p,color:col,lineWidth:1,lineStyle:2,title:t})))}
+ const mp=MPAT[c];if(mp){C.lines.push(C.series.createPriceLine({price:mp.nk,color:'#22d3ee',lineWidth:1,lineStyle:0,title:nm(mp.n)+'頸'}));if(mp.tgt!=null)C.lines.push(C.series.createPriceLine({price:mp.tgt,color:'#fb923c',lineWidth:1,lineStyle:2,title:'型態目標'}))}
  C.ch.timeScale().fitContent()}
 function renderCards(){const w=watch(),box=$('cards');const keep={};
- w.forEach(c=>{let el=document.getElementById('card_'+c);if(!el){el=document.createElement('div');el.id='card_'+c;el.className='card';el.innerHTML=`<div class="hd"></div><div class="lvw"></div><div class="chart" id="ch_${c}"></div>`;box.appendChild(el);if(!BARS[c])loadBars(c)}
+ w.forEach(c=>{let el=document.getElementById('card_'+c);if(!el){el=document.createElement('div');el.id='card_'+c;el.className='card';el.innerHTML=`<div class="hd"></div><div class="pbw"></div><div class="lvw"></div><div class="chart" id="ch_${c}"></div>`;box.appendChild(el);if(!BARS[c])loadBars(c)}
   keep[c]=1;box.appendChild(el);const q=Q[c]||{},s=sig(c),cd=cand?.list.find(x=>x.c===c);
   const pc=q.pct>0?'up':q.pct<0?'dn':'';
   el.querySelector('.hd').innerHTML=`<div class="row"><span class="sig">${s.e}</span><div><b>${c} ${q.n||cd?.n||''}</b> ${cd?.sec?'<span class="b y">★族群</span>':''} ${s.bad&&s.o?`<span class="b r">${s.rng<=0?'無區間':'停損超過500'}</span>`:''}<div class="mut">${s.txt}${BARS[c]&&!BARS[c].today?'（圖為前一日）':''}</div></div><span class="sp"></span><div style="text-align:right"><div class="big ${pc}">${f2(q.p)}</div><div class="${pc}" style="font-size:13px">${q.pct!=null?(q.pct>0?'+':'')+q.pct.toFixed(2)+'%':''} · ${q.v?Math.round(q.v).toLocaleString()+'張':''}</div></div><button class="x" data-hide="${c}">✕</button></div>`;
   el.querySelector('.lvw').innerHTML=s.o?`<div class="lv"><div><span>進場(高)</span><b>${f2(s.o.h)}</b></div><div><span>停損(低)</span><b class="dn">${f2(s.o.l)}</b></div><div><span>目標1:2</span><b class="up">${f2(s.tgt)}</b></div><div><span>1張風險</span><b class="${s.risk>500?'up':''}">${s.risk.toLocaleString()}</b></div></div>`:'';
-  el.classList.toggle('wb',!!s.bad);
-  if(s.o&&s.e==='🟢'&&lastSig[c]!=='🟢'&&lastSig[c]!=null)notify(`${c} ${q.n||''} 🟢 站上 ${s.o.h}，停損 ${s.o.l}${s.bad?'（停損超過500）':''}`);lastSig[c]=s.e});
+  el.classList.toggle('wb',!!s.bad);el.querySelector('.pbw').innerHTML=patBadges(c);
+  if(s.o&&s.e==='🟢'&&lastSig[c]!=='🟢'&&lastSig[c]!=null&&lastSig[c]!=='⏳')notify(`${c} ${q.n||''} 🟢 站上 ${s.o.h}，停損 ${s.o.l}${s.bad?'（停損超過500）':''}`);lastSig[c]=s.e});
  [...box.children].forEach(el=>{const c=el.id.slice(5);if(!keep[c]){el.remove();if(charts[c]){charts[c].ch.remove();delete charts[c]}}});
  if(!w.length)box.innerHTML='<div class="card mut">還沒有觀察股，從下面候選加入或輸入代號</div>'}
 function renderTop(){const t=tpe();$('clock').textContent=t.toTimeString().slice(0,8)+' 台北';const x=Q['TSE01'];
@@ -158,7 +197,7 @@ function renderTop(){const t=tpe();$('clock').textContent=t.toTimeString().slice
  if(!lastOk)$('feed').textContent=feedErr?'報價失敗':'連線中…';else if(open){const lag=Math.round(Date.now()/1000-ts);$('feed').textContent='最後成交 '+lag+' 秒前';$('feed').className='b '+(lag<=15?'g':lag<=60?'y':'r')}else{$('feed').textContent='收盤 · 資料 '+(ts?tpe(new Date(ts*1000)).toTimeString().slice(0,5):'');$('feed').className='b gr'}}
 function renderCand(){if(!cand)return;$('cDate').textContent=cand.date+' 資料';const br=cand.breadth,ok=cand.taiex>cand.ma20&&br>50;
  $('gate').innerHTML=`加權 ${f2(cand.taiex)}（月線 ${f2(cand.ma20)}）· 上漲家數 ${br}% · ${ok?'<span class="b g">順風</span>':'<span class="b r">逆風，少做</span>'}`;
- const w=watch();$('cTab').innerHTML='<tr><th>股票</th><th>收</th><th>漲幅</th><th>量比</th><th></th></tr>'+cand.list.map(x=>`<tr><td>${x.c} ${x.n} ${x.sec?'★':''}${x.lim?' <span class="b r">漲停</span>':''}</td><td>${x.p}</td><td class="up">+${x.ch}%</td><td>${x.vr}x</td><td>${w.includes(x.c)?'<span class="mut">觀察中</span>':`<button data-watch="${x.c}">＋</button>`}</td></tr>`).join('')}
+ const w=watch();$('cTab').innerHTML='<tr><th>股票</th><th>收</th><th>漲幅</th><th>量比</th><th></th></tr>'+cand.list.map(x=>`<tr><td>${x.c} ${x.n} ${x.sec?'★':''}${x.lim?' <span class="b r">漲停</span>':''}${(()=>{const q=(x.pat||[]).find(q=>q.st!=='失敗');return q?`<br><span class="pb" data-goto="${x.c}|D">${nm(q.n)} ${q.st}${q.tgt!=null?' 目標 '+f2(q.tgt):''}</span>`:''})()}</td><td>${x.p}</td><td class="up">+${x.ch}%</td><td>${x.vr}x</td><td>${w.includes(x.c)?'<span class="mut">觀察中</span>':`<button data-watch="${x.c}">＋</button>`}</td></tr>`).join('')}
 function renderAll(){renderTop();renderDisc();renderCards();renderCand()}
 
 // ---- 啟動 ----
@@ -169,5 +208,83 @@ async function init(){try{cand=await (await fetch('candidates.json?_='+Date.now(
  setInterval(()=>{const m=hm(),k=today()+m;if(m===1250&&!warned[k]){warned[k]=1;notify('12:50 準備平倉，13:00 前出場')}if(m===905||m===906){watch().forEach(loadBars)}},20000);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden){poll();watch().forEach(loadBars)}});
  try{if(navigator.wakeLock)await navigator.wakeLock.request('screen')}catch(e){}}
+// ===== 📐 型態雷達 =====
+const NM={'W底':'W雙底','M頭':'M雙頂'},nm=n=>NM[n]||n;
+function stBadge(p){const m={'已突破':['c','已確認'],'已跌破':['c','已確認'],'成形中':['y','成形中'],'量不足':['y','突破量不足'],'已達標':['o','已達標'],'失敗':['gr','失敗'],'趨勢中':['bl','趨勢中']}[p.st]||['gr',p.st];return`<span class="b ${m[0]}">${m[1]}</span>`}
+const dirTag=p=>p.dir>0?'<span class="up">▲偏多</span>':p.dir<0?'<span class="dn">▼偏空</span>':'<span class="mut">◆等方向</span>';
+const toBars=d=>d&&d.t?d.t.map((t,i)=>({t,o:d.o[i],h:d.h[i],l:d.l[i],c:d.c[i],v:d.v[i]})).sort((a,b)=>a.t-b.t):[];
+async function cny(path){const r=await fetch(API+path+(path.includes('?')?'&':'?')+'_='+Date.now(),{cache:'no-store'});const j=await r.json();return j.data}
+function aggr(b,sec){const o=[];b.forEach(x=>{let t=x.t;const tod=(t+28800)%86400;if(tod>=13*3600+1800)t-=300; // 13:30 撮合併入前一根
+  const k=Math.floor((t+28800-9*3600)/sec)*sec-28800+9*3600;const l=o[o.length-1];
+  if(l&&l.t===k){l.h=Math.max(l.h,x.h);l.l=Math.min(l.l,x.l);l.c=x.c;l.v+=x.v}else o.push({t:k,o:x.o,h:x.h,l:x.l,c:x.c,v:x.v})});return o}
+const IK={},DPAT={};
+async function getBars(c,tf){
+  if(tf==='D')return{bars:toBars(await cny(`/charting/history?resolution=D&symbol=TWS:${c}:STOCK`)),note:''};
+  const m5=toBars(await cny(`/charting/history?resolution=5&symbol=TWS:${c}:STOCK`));
+  if(tf==='5')return{bars:m5,note:m5.length<15?'今天K棒還太少（要約15根，10:15後），5分型態還找不到':''};
+  const sec=+tf*60;if(IK[c]===undefined){try{const r=await fetch(`ik/${c}.json?_=${Date.now()}`,{cache:'no-store'});IK[c]=r.ok?await r.json():null}catch(e){IK[c]=null}}
+  const d0=m5.length?m5[0].t-3600:Infinity;let hist=IK[c]&&IK[c][tf]?IK[c][tf].map(x=>({t:x[0],o:x[1],h:x[2],l:x[3],c:x[4],v:x[5]})).filter(x=>x.t<d0):[];
+  return{bars:hist.concat(aggr(m5,sec)),note:IK[c]?'':'這檔沒有預存多日分K，只有今天的資料（每晚會預存候選股＋熱門股）'}}
+let RD={c:null,tf:'D',bars:[],pats:[],sel:0,chart:null},rTimer=null;
+function rChips(){const hot=['2330','2409','3481','2317','2454'];const cs=[...new Set([...hot,...(cand?cand.list.map(x=>x.c):[]),...added])];
+  $('rChips').innerHTML=cs.map(c=>`<button data-rc="${c}">${c}${cand?.list.find(x=>x.c===c)?' '+cand.list.find(x=>x.c===c).n:''}</button>`).join('')}
+async function rScan(c,tf){c=(c||RD.c||'').trim().toUpperCase();if(!/^\w{4,6}$/.test(c))return;tf=tf||RD.tf;const same=c===RD.c&&tf===RD.tf;RD.c=c;RD.tf=tf;$('rCode').value=c;
+  document.querySelectorAll('#rTf button').forEach(b=>b.classList.toggle('on',b.dataset.tf===tf));
+  if(!same){$('rNote').textContent='讀取中…';RD.sel=0}
+  try{const [q]=await cny(`/quote/quotes/TWS:${c}:STOCK?column=K,E,KEY,M,AI`);
+    if(q){$('rName').textContent=`${c} ${q['200009']||''}`;$('rMkt').textContent=q['200011']==='OTC'?'上櫃':q['200011']==='TSE'?'上市':(q['200011']||'');
+      const pct=q['56'],cls=pct>0?'up':pct<0?'dn':'';$('rPx').textContent=f2(q['6']);$('rPx').className='px '+cls;$('rCh').innerHTML=`<span class="${cls}">${q['11']>0?'+':''}${f2(q['11'])}（${pct>0?'+':''}${pct!=null?pct.toFixed(2):''}%）</span>`}
+    else{$('rName').textContent=c+' 查無此股'}
+    const {bars,note}=await getBars(c,tf);RD.bars=bars;RD.pats=PAT.detect(bars,tf==='D'?'D':tf==='5'?'M5':'I');if(RD.sel>=RD.pats.length)RD.sel=0;
+    const lt=bars.length?bars[bars.length-1].t:null;$('rTime').textContent=lt?'最新K棒 '+(tf==='D'?new Date(lt*1000).toISOString().slice(0,10):tpe(new Date(lt*1000)).toTimeString().slice(0,5)+' '+(tpe(new Date(lt*1000)).getMonth()+1)+'/'+tpe(new Date(lt*1000)).getDate()):'';
+    $('rNote').textContent=note+(bars.length?'':' 沒有K棒資料');$('rUpd').textContent='更新 '+tpe().toTimeString().slice(0,8);
+    rDraw();rCards()}catch(e){console.warn(e);$('rNote').textContent='讀取失敗，稍後再試'}}
+function rCards(){const P=RD.pats;$('rN').textContent=P.length;
+  $('rCar').innerHTML=P.length?P.map((p,i)=>`<div class="pc ${i===RD.sel?'on':''}" data-pi="${i}"><div class="row"><span class="nm">${nm(p.n)}</span>${stBadge(p)}<span class="sp"></span>${dirTag(p)}</div>
+   <div class="mut" style="margin-top:2px">${p.conf!=null?'信心 <b style="color:#22d3ee">'+p.conf+'%</b>（規則分）· ':''}${p.note}</div>
+   <div class="pg">${p.dir===0?`<div><span>上緣(突破)</span><b style="color:#93c5fd">${f2(p.nk)}</b></div><div><span>目標 ↑／↓</span><b style="color:#fb923c">${f2(p.tgt)}／${f2(p.tgt2)}</b></div><div><span>下緣(跌破)</span><b style="color:#93c5fd">${f2(p.nk2)}</b></div>`:`<div><span>頸線/確認</span><b style="color:#93c5fd">${f2(p.nk)}</b></div><div><span>目標</span><b style="color:#fb923c">${p.tgt!=null?f2(p.tgt):'—'}</b></div><div><span>停損/失效</span><b style="color:#c084fc">${f2(p.stop)}</b></div>`}</div>
+   <div class="ex">💬 ${p.ex}</div></div>`).join(''):`<div class="pc mut">這個週期目前沒有明確型態。沒有型態就是沒有訊號，不用硬做。換其他週期看看。</div>`}
+function rDraw(){const el=$('rChart');const tf=RD.tf,sh=t=>tf==='D'?t:t+28800;
+  if(RD.chart){RD.chart.remove();RD.chart=null}
+  const ch=LightweightCharts.createChart(el,{height:330,layout:{background:{color:'transparent'},textColor:'#8b93a1',fontSize:10,attributionLogo:false},grid:{vertLines:{color:'#1a1e26'},horzLines:{color:'#1a1e26'}},timeScale:{timeVisible:tf!=='D',secondsVisible:false,borderColor:'#2a2f3a',rightOffset:4},rightPriceScale:{borderColor:'#2a2f3a',scaleMargins:{top:.08,bottom:.22}},crosshair:{mode:0}});RD.chart=ch;
+  const P0=RD.pats[RD.sel],LV=P0?[P0.nk,P0.nk2,P0.tgt,P0.tgt2,P0.stop].filter(x=>x!=null):[];const cs=ch.addCandlestickSeries({upColor:'#ff4d4f',downColor:'#22c55e',borderVisible:false,wickUpColor:'#ff4d4f',wickDownColor:'#22c55e',autoscaleInfoProvider:orig=>{const r=orig();if(!r||!LV.length)return r;return{priceRange:{minValue:Math.min(r.priceRange.minValue,...LV),maxValue:Math.max(r.priceRange.maxValue,...LV)},margins:r.margins}}});
+  const B=RD.bars.slice(tf==='D'?-120:-160);cs.setData(B.map(x=>({time:sh(x.t),open:x.o,high:x.h,low:x.l,close:x.c})));
+  const vs=ch.addHistogramSeries({priceScaleId:'v',priceFormat:{type:'volume'},lastValueVisible:false,priceLineVisible:false});ch.priceScale('v').applyOptions({scaleMargins:{top:.82,bottom:0}});
+  vs.setData(B.map(x=>({time:sh(x.t),value:x.v,color:x.c>=x.o?'rgba(255,77,79,.45)':'rgba(34,197,94,.45)'})));
+  const p=RD.pats[RD.sel];
+  if(p){const t0=B.length?B[0].t:0,inR=t=>t>=t0;
+    const pts=p.pts.filter(x=>inR(x[0])).slice().sort((a,b)=>a[0]-b[0]);
+    // 型態轉折連線（青色）：同一時間只留一點
+    const lp=[];pts.forEach(x=>{if(!lp.length||lp[lp.length-1].time<sh(x[0]))lp.push({time:sh(x[0]),value:x[1]})});
+    if(lp.length>1&&!/三角|箱型|旗形/.test(p.n)){const s=ch.addLineSeries({color:'#22d3ee',lineWidth:2,lastValueVisible:false,priceLineVisible:false,crosshairMarkerVisible:false});s.setData(lp)}
+    p.ln.forEach(l=>{if(!inR(l[0])||sh(l[0])>=sh(l[2]))return;const neck=/頸/.test(l[4]);const s=ch.addLineSeries({color:neck?'#ffffff':'#22d3ee',lineWidth:neck?2:2,lastValueVisible:false,priceLineVisible:false,crosshairMarkerVisible:false});s.setData([{time:sh(l[0]),value:l[1]},{time:sh(l[2]),value:l[3]}])});
+    const mk=pts.map(x=>{const bar=B.find(b=>b.t===x[0]);const top=bar?x[1]>=bar.h*0.9999&&x[1]>(bar.l+bar.h)/2:x[1]>=p.nk;return{time:sh(x[0]),position:top?'aboveBar':'belowBar',color:'#22d3ee',shape:'circle',text:x[2],size:.6}});
+    if(p.bt!=null&&inR(p.bt))mk.push({time:sh(p.bt),position:p.dir>0?'belowBar':'aboveBar',color:'#facc15',shape:p.dir>0?'arrowUp':'arrowDown',text:p.dir>0?'突破':'跌破',size:2});
+    cs.setMarkers(mk.sort((a,b)=>a.time-b.time));
+    const pl=(price,color,style,title)=>price!=null&&cs.createPriceLine({price,color,lineWidth:1,lineStyle:style,axisLabelVisible:true,title});
+    if(p.dir===0){pl(p.nk,'#3b82f6',2,'突破');pl(p.nk2,'#3b82f6',2,'跌破');pl(p.tgt,'#fb923c',2,'目標↑');pl(p.tgt2,'#fb923c',2,'目標↓')}
+    else{pl(p.nk,'#3b82f6',2,'確認');pl(p.stop,'#a855f7',1,'失效');pl(p.tgt,'#fb923c',2,'目標')}}
+  ch.timeScale().fitContent()}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-rc],[data-pi],[data-tf],[data-goto]');if(!t)return;
+  if(t.dataset.rc)rScan(t.dataset.rc);if(t.dataset.tf)rScan(null,t.dataset.tf);
+  if(t.dataset.pi!=null){RD.sel=+t.dataset.pi;rDraw();rCards();window.scrollTo({top:$('rChart').getBoundingClientRect().top+scrollY-120,behavior:'smooth'})}
+  if(t.dataset.goto){const [c,tf]=t.dataset.goto.split('|');showTab('RD');rScan(c,tf)}});
+$('rGo').onclick=()=>rScan($('rCode').value);$('rCode').addEventListener('keydown',e=>{if(e.key==='Enter')rScan($('rCode').value)});
+function showTab(x){$('secDT').style.display=x==='DT'?'':'none';$('secRD').style.display=x==='RD'?'':'none';$('tbDT').classList.toggle('on',x==='DT');$('tbRD').classList.toggle('on',x==='RD');
+  if(x==='RD'){rChips();if(!RD.c)rScan((cand&&cand.list[0]?.c)||'2330','D');clearInterval(rTimer);rTimer=setInterval(()=>{if(!document.hidden&&RD.c)rScan()},30000)}else clearInterval(rTimer);
+  try{history.replaceState(null,'',location.pathname+location.search+(x==='RD'?'#radar':''))}catch(e){}}
+$('tbDT').onclick=()=>showTab('DT');$('tbRD').onclick=()=>showTab('RD');
+// 當沖卡片：日K與5分型態小標籤
+async function dayPat(c){if(DPAT[c])return;DPAT[c]='…';const cd=cand?.list.find(x=>x.c===c);
+  try{const b=toBars(await cny(`/charting/history?resolution=D&symbol=TWS:${c}:STOCK`));DPAT[c]=PAT.detect(b,'D')}catch(e){DPAT[c]=cd?.pat||[]}}
+function patBadges(c){let h='';const dp=Array.isArray(DPAT[c])?DPAT[c]:null;if(!dp)dayPat(c);
+  const d=(dp||[]).find(p=>p.st!=='趨勢中'&&p.st!=='失敗');
+  if(d)h+=`<span class="pb" data-goto="${c}|D">日K ${nm(d.n)} ${stBadge(d)} 目標 ${f2(d.tgt)}</span>`;
+  const B=BARS[c];if(B&&B.today&&B.bars.length>=15){const m=PAT.detect(B.bars.map(x=>({t:x.time,o:x.open,h:x.high,l:x.low,c:x.close,v:x.v||0})),'M5').filter(p=>p.st!=='趨勢中'&&p.st!=='失敗');
+    if(m[0]){h+=`<span class="pb" data-goto="${c}|5">5分 ${nm(m[0].n)} ${stBadge(m[0])} 目標 ${f2(m[0].tgt)}</span>`;MPAT[c]=m[0]}else MPAT[c]=null}
+  return h}
+const MPAT={};
+
 init();
+if(location.hash==="#radar")setTimeout(()=>showTab("RD"),300);
 </script></body></html>
