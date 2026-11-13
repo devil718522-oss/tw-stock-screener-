@@ -38,9 +38,19 @@ details p,details li{color:#c4c9d2;font-size:13px}
 .b.c{background:#083344;color:#22d3ee}.b.o{background:#431407;color:#fb923c}.b.bl{background:#172554;color:#93c5fd}
 .bigbtn{background:#0e7490;border-color:#0e7490;font-weight:800;padding:8px 18px}
 .pb{display:inline-block;margin:4px 4px 0 0;padding:2px 8px;border-radius:8px;font-size:12px;background:#11141a;border:1px solid #164e63;color:#a5f3fc;cursor:pointer}
+button.ntf{padding:5px 10px;font-size:13px;font-weight:700;white-space:nowrap}button.ntf.on{background:#123a22;border-color:#165d32;color:#5ee38c}
+#toasts{position:fixed;left:8px;right:8px;bottom:16px;z-index:99;display:flex;flex-direction:column-reverse;gap:6px;pointer-events:none}
+.toast{background:#083344;border:1px solid #22d3ee;border-radius:12px;padding:10px 12px;color:#e8eaed;box-shadow:0 8px 24px #0008;animation:pop .25s ease}
+.toast b{display:block;font-size:14px}.toast span{display:block;font-size:12px;color:#c4c9d2;margin-top:2px;font-weight:400}
+@keyframes pop{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+.card.flash{animation:flash .9s ease}.card.flashT{animation:flashT .9s ease}.card.flashS{animation:flashS .9s ease}
+@keyframes flash{0%,100%{box-shadow:none}40%{box-shadow:0 0 0 3px #22d3ee}}
+@keyframes flashT{0%,100%{box-shadow:none}40%{box-shadow:0 0 0 3px #f5a524}}
+@keyframes flashS{0%,100%{box-shadow:none}40%{box-shadow:0 0 0 3px #ff4d4f}}
 </style></head><body>
-<div class="top"><div class="row"><b>⚡ 史塔克交易助手</b><span id="clock" class="mut"></span><span class="sp"></span><a href="../" class="mut">選股網站</a></div>
-<div class="row" style="margin-top:4px"><span id="tx" class="mut">加權 —</span><span class="sp"></span><span id="feed" class="b gr">連線中…</span></div></div>
+<div class="top"><div class="row"><b>⚡ 史塔克交易助手</b><span id="clock" class="mut"></span><span class="sp"></span><button id="ntf" class="ntf">🔔 開啟通知</button><a href="../" class="mut">選股網站</a></div>
+<div class="row" style="margin-top:4px"><span id="tx" class="mut">加權 —</span><span class="sp"></span><span id="feed" class="b gr">連線中…</span></div>
+<div id="ntfHint" class="mut" style="margin-top:2px">網頁要開著才會通知</div></div>
 <div class="tabs"><button id="tbDT" class="on">⚡ 當沖</button><button id="tbRD">📐 型態雷達</button></div>
 <div id="secDT"><div id="banners"></div>
 
@@ -51,7 +61,7 @@ details p,details li{color:#c4c9d2;font-size:13px}
 <table id="tLog" style="margin-top:6px"></table></div>
 
 <h2>📈 盤中訊號 <span class="mut">開盤區間（09:00–09:05 第一根5分K）</span></h2>
-<div class="row"><input id="addCode" placeholder="加代號" inputmode="numeric"><button id="addBtn">＋ 加入</button><span class="sp"></span><button id="ntf">🔔 通知</button></div>
+<div class="row"><input id="addCode" placeholder="加代號" inputmode="numeric"><button id="addBtn">＋ 加入</button></div>
 <div id="cards"></div>
 
 <h2>🌅 盤前候選 <span id="cDate" class="mut"></span></h2>
@@ -82,6 +92,7 @@ details p,details li{color:#c4c9d2;font-size:13px}
 <li>候選股：前一天上漲、收在當天高檔、量≥5日均量1.5倍且≥3000張，強勢族群（★）優先。每晚更新。標「漲停」的開盤常跳空，區間不好抓。</li>
 <li>報價來源：鉅亨網（cnyes）公開報價，每5秒更新；上方徽章顯示「最後成交距今幾秒」。下單一定要看券商App的即時價。手機螢幕關掉或切到別的App時，瀏覽器會暫停更新，回來會自動補抓。</li>
 <li>點卡片右上 ✕ 可移除；資料都存在這支手機的瀏覽器裡。</li>
+<li><b>🔔 通知</b>：點上方「開啟通知」允許後，進場訊號（站上第一根高點）、停損（跌破第一根低點）、達標（到 1:2 目標），以及 5 分K 型態頸線突破／跌破確認時，會跳出系統通知、發出短音、震動，並在畫面底部提示。同一檔同一件事一天只提醒一次。網頁要開著才會通知（螢幕關掉或切走 App 可能暫停）。iPhone 請先用 Safari「加入主畫面」再開啟。已開啟後再點一次按鈕可試聽。</li>
 <li><b>📐 型態雷達</b>：輸入代號按掃描，或點熱門股。上面切換 日K／60分／30分／15分／5分。左右滑下面的型態卡片，點一張就把那個型態畫在圖上。當沖卡片上的「日K／5分」小標籤也可以點，會跳到雷達。</li>
 <li><b>圖上的線</b>：青色＝型態的轉折點連線（底1、頸、底2…）；白色＝頸線；藍色虛線「確認」＝收盤要站上（或跌破）這價才算成立；紫色點線「失效」＝停損價，到這裡型態就不算了；橘色虛線「目標」＝量度目標價；▲突破／▼跌破＝成立的那根K棒。</li>
 <li><b>狀態</b>：成形中＝形狀有了但還沒突破，先別追；已確認＝收盤已突破（偏多的還要量比前20根平均大1.2倍以上，盤中1.3倍）；突破量不足＝有突破但量太小，容易假突破；已達標＝已到目標價，不追；失敗＝突破後又跑回去了。</li>
@@ -94,6 +105,7 @@ details p,details li{color:#c4c9d2;font-size:13px}
 <div class="row"><span class="mut">手續費折數</span><input id="sDisc" class="w" inputmode="decimal"><span class="mut">最低手續費</span><input id="sMin" class="w" inputmode="numeric"><button id="sSave">存</button><button id="resetDay">清除今日紀錄</button></div>
 </details>
 
+<div id="toasts"></div>
 <script src="lwc.js"></script>
 <script src="pat.js"></script>
 <script>
@@ -128,7 +140,7 @@ function discipline(){const t=trades();let P=0,L=0,open=0,big=0;t.forEach(x=>{co
 function renderDisc(){const d=discipline();$('sN').textContent=d.t.length+'/2';$('sN').className=d.t.length>=2?'up':'';
  $('sP').textContent=money(d.P);$('sP').className=d.P>0?'up':d.P<0?'dn':'';$('sL').textContent=d.L+'/2';$('sL').className=d.L>=2?'up':'';
  $('tLog').innerHTML=d.t.length?'<tr><th>代號</th><th>方向</th><th>張</th><th>進</th><th>出</th><th>損益</th><th></th></tr>'+d.t.map((x,i)=>{const p=pnl(x);return`<tr><td>${x.c} ${x.n||''}${x.avg?' <span class="b r">攤平</span>':''}</td><td>${x.side}</td><td class="${(x.q||1)>1?'up':''}">${x.q||1}</td><td>${x.inp}</td><td>${x.out??'<button data-close="'+i+'">平倉</button>'}</td><td class="${p>0?'up':p<0?'dn':''}">${p==null?'持有中':money(p)}</td><td><button class="x" data-del="${i}">✕</button></td></tr>`}).join(''):'<tr><td class="mut">今天還沒交易</td></tr>';
- let h=d.w.map(([c,t])=>`<div class="ban ${c==='r'?'lock':'warn'}">${t}</div>`).join('');
+ let h=(TEST?'<div class="ban warn">🧪 測試模式：開盤前若沒有5分K，會用模擬重播驗證通知（不是今日真實訊號）</div>':'')+d.w.map(([c,t])=>`<div class="ban ${c==='r'?'lock':'warn'}">${t}</div>`).join('');
  if(!lastOk||Date.now()-lastOk>30000)h+=lastOk||feedErr?`<div class="ban err">⚠️ 報價${lastOk?'超過30秒沒更新':'抓不到'}，請以券商App為準</div>`:'';
  $('banners').innerHTML=h;return d}
 document.addEventListener('click',e=>{const t=trades();
@@ -147,8 +159,41 @@ $('addBtn').onclick=()=>{const c=$('addCode').value.trim().toUpperCase();if(!/^\
 $('sDisc').value=cfg.disc;$('sMin').value=cfg.min;$('dDisc').textContent=cfg.disc;$('dMin').textContent=cfg.min;
 $('sSave').onclick=()=>{cfg={disc:parseFloat($('sDisc').value)||0.26,min:parseFloat($('sMin').value)||0};SS('cfg',cfg);$('dDisc').textContent=cfg.disc;$('dMin').textContent=cfg.min;renderAll()};
 $('resetDay').onclick=()=>{if(confirm('清除今天全部交易紀錄？')){saveTrades([]);renderAll()}};
-$('ntf').onclick=()=>{if(!('Notification'in window))return alert('這個瀏覽器不支援通知（iPhone 要先「加入主畫面」）');Notification.requestPermission().then(p=>{$('ntf').textContent=p==='granted'?'🔔 已開':'🔕 未允許'})};
-function notify(msg){try{if(navigator.vibrate)navigator.vibrate([200,100,200]);if(window.Notification&&Notification.permission==='granted')new Notification('史塔克交易助手',{body:msg,tag:msg})}catch(e){}}
+// ---- 通知 ----
+let AC=null, lastBeep=0, swReg=null;
+function unlockAudio(){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();const o=AC.createOscillator(),g=AC.createGain();g.gain.value=0;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+.01)}catch(e){}}
+function beep(){try{if(!AC)return;if(AC.state==='suspended')AC.resume();if(Date.now()-lastBeep<800)return;lastBeep=Date.now();const now=AC.currentTime;
+  [0,.11].forEach((off,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=i?880:660;g.gain.setValueAtTime(.0001,now+off);g.gain.exponentialRampToValueAtTime(.16,now+off+.02);g.gain.exponentialRampToValueAtTime(.0001,now+off+.12);o.connect(g);g.connect(AC.destination);o.start(now+off);o.stop(now+off+.13)})}catch(e){}}
+function ntfGranted(){return !!(window.Notification&&Notification.permission==='granted')}
+function syncNtfBtn(){const b=$('ntf'),h=$('ntfHint');if(!b)return;const g=ntfGranted();b.textContent=g?'🔔 已開啟':(window.Notification&&Notification.permission==='denied'?'🔕 未允許':'🔔 開啟通知');b.classList.toggle('on',g);if(h)h.textContent=(g?'已開啟 · ':'')+'網頁要開著才會通知'}
+function toast(title,body){let box=$('toasts');if(!box){box=document.createElement('div');box.id='toasts';document.body.appendChild(box)}const el=document.createElement('div');el.className='toast';el.innerHTML=`<b>${title}</b><span>${body}</span>`;box.appendChild(el);setTimeout(()=>{el.remove()},6000)}
+function showNtf(title,body,tag){if(!ntfGranted())return;const opt={body,tag,renotify:false,silent:false,lang:'zh-Hant-TW'};
+  const go=()=>{if(swReg&&swReg.showNotification)return swReg.showNotification(title,opt);try{new Notification(title,opt)}catch(e){}};
+  if(swReg)return go();
+  if(navigator.serviceWorker&&navigator.serviceWorker.ready){navigator.serviceWorker.ready.then(r=>{swReg=r;go()}).catch(()=>{try{new Notification(title,opt)}catch(e){}});return}
+  try{new Notification(title,opt)}catch(e){}}
+function alertStore(){const a=LS('alerts')||{};const d=today();if(a.d!==d)return{d,k:{}};return a}
+function alertSeen(id){return !!alertStore().k[id]}
+function alertMark(id){const a=alertStore();a.k[id]=1;SS('alerts',a)}
+function flashCard(c,kind){const el=document.getElementById('card_'+c);if(!el)return;const cls=kind==='stop'?'flashS':kind==='tgt'?'flashT':'flash';el.classList.remove('flash','flashT','flashS');void el.offsetWidth;el.classList.add(cls)}
+function fireAlert(c,kind,title,body){const id=(c||'_')+':'+kind;if(alertSeen(id))return false;alertMark(id);
+  toast(title,body);beep();try{if(navigator.vibrate)navigator.vibrate([200,80,200])}catch(e){}
+  showNtf(title,body,id);if(c&&c!=='_')flashCard(c,kind);return true}
+function pingNtf(){const title='史塔克｜通知已開啟',body='之後出現進場、停損、達標或5分型態確認時會通知你。網頁要開著才會通知。';
+  toast(title,body);beep();try{if(navigator.vibrate)navigator.vibrate([200,80,200])}catch(e){}showNtf(title,body,'stark-on')}
+function notify(msg){fireAlert('_','msg:'+String(msg).slice(0,40),'史塔克交易助手',msg)}
+function checkSigAlerts(c,s,q){if(!s||!s.o||!q||!(q.p>0))return;const n=q.n||'',px=f2(q.p),hi=f2(s.o.h),lo=f2(s.o.l),tg=f2(s.tgt),risk=s.bad?'（1張風險超過500）':'';
+  if(q.p>s.o.h)fireAlert(c,'entry','史塔克｜'+c+' 進場訊號',`${c} ${n} 現價 ${px} 已站上開盤區間高點 ${hi}。停損 ${lo}，目標 ${tg}${risk}`);
+  if(q.p>=s.tgt&&s.rng>0)fireAlert(c,'tgt','史塔克｜'+c+' 達標',`${c} ${n} 現價 ${px} 已到 1:2 目標 ${tg}。可考慮出場。`);
+  if(q.p<s.o.l)fireAlert(c,'stop','史塔克｜'+c+' 停損',`${c} ${n} 現價 ${px} 已跌破開盤區間低點 ${lo}。若已進場請考慮停損。`)}
+function checkPatAlerts(c,pats){(pats||[]).forEach(p=>{if(p.st!=='已突破'&&p.st!=='已跌破')return;const n=Q[c]?.n||'',act=p.st==='已突破'?'頸線突破':'頸線跌破';
+  fireAlert(c,'pat:'+p.n,'史塔克｜'+c+' '+nm(p.n)+act,`${c} ${n} 5分K「${nm(p.n)}」已確認（${act} ${f2(p.nk)}）。現價 ${f2(Q[c]?.p)}，目標 ${p.tgt!=null?f2(p.tgt):'—'}，停損 ${f2(p.stop)}。`)})}
+$('ntf').onclick=async()=>{unlockAudio();
+  if(!('Notification'in window)){SS('ntfOn',1);syncNtfBtn();alert('這個瀏覽器不支援系統通知。iPhone 請先用 Safari 打開，點分享「加入主畫面」後再從主畫面開啟。網頁開著時仍會在畫面提示並發出聲音。');pingNtf();return}
+  try{const p=await Notification.requestPermission();SS('ntfOn',1);syncNtfBtn();if(p==='granted')pingNtf();else if(p==='denied')alert('通知未允許。可到瀏覽器設定打開。網頁開著時仍會在畫面提示。')}catch(e){alert('無法開啟通知')}};
+syncNtfBtn();
+document.addEventListener('pointerdown',unlockAudio,{once:true,passive:true});
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').then(r=>{swReg=r}).catch(()=>{});
 
 // ---- 資料 ----
 let feedErr=0;
@@ -156,13 +201,25 @@ async function poll(){const w=watch();const syms=['TWS:TSE01:INDEX',...w.map(c=>
  try{const r=await fetch(`${API}/quote/quotes/${syms.join(',')}?column=K,E,KEY,M,AI&_=${Date.now()}`,{cache:'no-store'});const j=await r.json();
   (j.data||[]).forEach(q=>{const id=q['200010'];Q[id]={p:q['6'],ch:q['11'],pct:q['56'],h:q['12'],l:q['13'],o:q['19'],y:q['21'],v:+q['800001'],ts:q['200007'],n:q['200009']};if(BARS[id]&&!TEST)liveBar(id)});
   lastOk=Date.now();feedErr=0}catch(e){feedErr++;console.warn(e)}
- renderAll()}
+ if(TEST)fillTestBars();renderAll()}
+function synthBars(c,kind){const px=+(Q[c]&&Q[c].p||0);if(!px)return[];
+  const t=tpe(),start=Math.floor(Date.UTC(t.getFullYear(),t.getMonth(),t.getDate(),1,0,0)/1000)-86400;
+  const tick=px>=100?0.5:px>=50?0.1:0.05;let rng=Math.max(tick*4,+(px*0.01).toFixed(2));rng=Math.round(rng/tick)*tick;
+  let h,l;if(kind==='stop'){l=+(px+tick).toFixed(2);h=+(l+rng).toFixed(2)}
+  else if(kind==='tgt'){h=+(px-2*rng).toFixed(2);l=+(h-rng).toFixed(2)}
+  else{h=+(px-tick).toFixed(2);l=+(h-rng).toFixed(2)}
+  if(!(h>l))return[];const mid=+(l+(h-l)/2).toFixed(2),bars=[];
+  for(let i=0;i<54;i++){const time=start+i*300,cl=i===53?px:mid;bars.push({time,open:mid,high:i===0?h:Math.max(cl,mid)+tick,low:i===0?l:Math.min(cl,mid)-tick,close:cl,v:1000})}
+  return bars}
+function fillTestBars(){if(!TEST)return;watch().forEach((c,i)=>{if(BARS[c]&&BARS[c].bars&&BARS[c].bars.length&&OR[c])return;if(!Q[c]||!(Q[c].p>0))return;
+  const b=synthBars(c,['entry','stop','tgt'][i%3]);if(!b.length)return;BARS[c]={bars:b,today:true,synth:1};OR[c]={h:b[0].high,l:b[0].low};draw(c)})}
 async function loadBars(c){try{const r=await fetch(`${API}/charting/history?resolution=5&symbol=TWS:${c}:STOCK&quote=1&_=${Date.now()}`,{cache:'no-store'});const d=(await r.json()).data;
-  const b=d.t.map((t,i)=>({time:t,open:d.o[i],high:d.h[i],low:d.l[i],close:d.c[i],v:d.v[i]})).sort((a,b)=>a.time-b.time);
+  const b=(d&&d.t&&d.t.length)?d.t.map((t,i)=>({time:t,open:d.o[i],high:d.h[i],low:d.l[i],close:d.c[i],v:d.v[i]})).sort((a,b)=>a.time-b.time):[];
+  if(!b.length){if(TEST){fillTestBars();renderAll()}return}
   const day=x=>{const t=tpe(new Date(x*1000));return t.toDateString()};const td=tpe().toDateString();
-  const td2=TEST&&b.length?day(b[b.length-1].time):td;const tb=b.filter(x=>day(x.time)===td2);BARS[c]={bars:tb.length?tb:b,today:tb.length>0};
+  const td2=TEST?day(b[b.length-1].time):td;const tb=b.filter(x=>day(x.time)===td2);BARS[c]={bars:tb.length?tb:b,today:tb.length>0};
   const f=tb.find(x=>{const t=tpe(new Date(x.time*1000));return t.getHours()===9&&t.getMinutes()===0});
-  OR[c]=f&&hm()>=905?{h:f.high,l:f.low}:null;patBadges(c);draw(c)}catch(e){console.warn('bars',c,e)}}
+  OR[c]=f&&hm()>=905?{h:f.high,l:f.low}:null;patBadges(c);draw(c);renderAll()}catch(e){console.warn('bars',c,e);if(TEST){fillTestBars();renderAll()}}}
 function liveBar(c){const B=BARS[c],q=Q[c];if(!B||!B.today||!q||!q.p||!q.ts)return;const t=Math.floor(q.ts/300)*300;let last=B.bars[B.bars.length-1];
  if(last&&last.time===t){last.high=Math.max(last.high,q.p);last.low=Math.min(last.low,q.p);last.close=q.p}else if(!last||t>last.time){B.bars.push({time:t,open:q.p,high:q.p,low:q.p,close:q.p})}
  const s=charts[c];if(s){const b=B.bars[B.bars.length-1];s.series.update({time:b.time+28800,open:b.open,high:b.high,low:b.low,close:b.close})}}
@@ -188,7 +245,7 @@ function renderCards(){const w=watch(),box=$('cards');const keep={};
   el.querySelector('.hd').innerHTML=`<div class="row"><span class="sig">${s.e}</span><div><b>${c} ${q.n||cd?.n||''}</b> ${cd?.sec?'<span class="b y">★族群</span>':''} ${s.bad&&s.o?`<span class="b r">${s.rng<=0?'無區間':'停損超過500'}</span>`:''}<div class="mut">${s.txt}${BARS[c]&&!BARS[c].today?'（圖為前一日）':''}</div></div><span class="sp"></span><div style="text-align:right"><div class="big ${pc}">${f2(q.p)}</div><div class="${pc}" style="font-size:13px">${q.pct!=null?(q.pct>0?'+':'')+q.pct.toFixed(2)+'%':''} · ${q.v?Math.round(q.v).toLocaleString()+'張':''}</div></div><button class="x" data-hide="${c}">✕</button></div>`;
   el.querySelector('.lvw').innerHTML=s.o?`<div class="lv"><div><span>進場(高)</span><b>${f2(s.o.h)}</b></div><div><span>停損(低)</span><b class="dn">${f2(s.o.l)}</b></div><div><span>目標1:2</span><b class="up">${f2(s.tgt)}</b></div><div><span>1張風險</span><b class="${s.risk>500?'up':''}">${s.risk.toLocaleString()}</b></div></div>`:'';
   el.classList.toggle('wb',!!s.bad);el.querySelector('.pbw').innerHTML=patBadges(c);
-  if(s.o&&s.e==='🟢'&&lastSig[c]!=='🟢'&&lastSig[c]!=null&&lastSig[c]!=='⏳')notify(`${c} ${q.n||''} 🟢 站上 ${s.o.h}，停損 ${s.o.l}${s.bad?'（停損超過500）':''}`);lastSig[c]=s.e});
+  checkSigAlerts(c,s,q);lastSig[c]=s.e});
  [...box.children].forEach(el=>{const c=el.id.slice(5);if(!keep[c]){el.remove();if(charts[c]){charts[c].ch.remove();delete charts[c]}}});
  if(!w.length)box.innerHTML='<div class="card mut">還沒有觀察股，從下面候選加入或輸入代號</div>'}
 function renderTop(){const t=tpe();$('clock').textContent=t.toTimeString().slice(0,8)+' 台北';const x=Q['TSE01'];
@@ -281,10 +338,12 @@ function patBadges(c){let h='';const dp=Array.isArray(DPAT[c])?DPAT[c]:null;if(!
   const d=(dp||[]).find(p=>p.st!=='趨勢中'&&p.st!=='失敗');
   if(d)h+=`<span class="pb" data-goto="${c}|D">日K ${nm(d.n)} ${stBadge(d)} 目標 ${f2(d.tgt)}</span>`;
   const B=BARS[c];if(B&&B.today&&B.bars.length>=15){const m=PAT.detect(B.bars.map(x=>({t:x.time,o:x.open,h:x.high,l:x.low,c:x.close,v:x.v||0})),'M5').filter(p=>p.st!=='趨勢中'&&p.st!=='失敗');
-    if(m[0]){h+=`<span class="pb" data-goto="${c}|5">5分 ${nm(m[0].n)} ${stBadge(m[0])} 目標 ${f2(m[0].tgt)}</span>`;MPAT[c]=m[0]}else MPAT[c]=null}
+    if(m[0]){h+=`<span class="pb" data-goto="${c}|5">5分 ${nm(m[0].n)} ${stBadge(m[0])} 目標 ${f2(m[0].tgt)}</span>`;MPAT[c]=m[0]}else MPAT[c]=null;checkPatAlerts(c,m)}
   return h}
 const MPAT={};
 
 init();
 if(location.hash==="#radar")setTimeout(()=>showTab("RD"),300);
+window.__stark={alertLog:[],fired(c,kind){return alertSeen((c||'_')+':'+kind)},store:alertStore,ping:pingNtf,unlock:unlockAudio};
+const _fa=fireAlert;fireAlert=function(c,kind,title,body){const ok=_fa(c,kind,title,body);if(ok)window.__stark.alertLog.push({c,kind,title,body});return ok};
 </script></body></html>
