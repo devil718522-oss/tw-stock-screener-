@@ -35,7 +35,13 @@ td{padding:6px 7px;border-bottom:1px solid #f1f5f9;text-align:right;white-space:
 .lg{font-size:11.5px;color:#4b5563;display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:4px}.lg i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:3px}
 .bt td,.bt th{padding:5px;text-align:right;position:static}.bt td:first-child,.bt th:first-child{text-align:left}
 .fold{margin-top:10px;background:#f8fafc;border-radius:10px;padding:8px 10px}.fold summary{font-weight:700;cursor:pointer}.chip{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;background:rgba(255,255,255,.6);margin-left:4px;white-space:nowrap}.pk .dt summary{font-size:12px;color:#6b7280;cursor:pointer}.nums{display:flex;gap:6px;margin-top:6px}.nums div{flex:1;text-align:center;background:#f8fafc;border-radius:8px;padding:5px 2px;font-size:11px;color:#6b7280}.nums b{display:block;font-size:16px;color:#111}
-.cb{font-size:11px;padding:1px 6px;border-radius:6px;margin-left:3px;font-weight:600;white-space:nowrap;vertical-align:middle}.cb.it{background:#dcfce7;color:#166534}.cb.big{background:#ffedd5;color:#9a3412}</style><link rel="icon" href="data:,"></head><body><header><h1>📈 台股選股</h1><p id="meta"></p></header>
+.cb{font-size:11px;padding:1px 6px;border-radius:6px;margin-left:3px;font-weight:600;white-space:nowrap;vertical-align:middle}.cb.it{background:#dcfce7;color:#166534}.cb.big{background:#ffedd5;color:#9a3412}
+.chiprow{display:flex;flex-wrap:wrap;gap:5px 6px;margin:6px 0 2px;font-size:12.5px;line-height:1.45;align-items:center}
+.chiprow .ci{background:#f8fafc;border:1px solid #eef2f7;border-radius:7px;padding:3px 7px;white-space:nowrap;font-size:12.5px}
+.chiprow .ci .lb{color:#6b7280;margin-right:3px;font-weight:500}
+.chiprow .ci b{font-weight:700;font-size:13px}
+.chiprow .u{color:#9ca3af;font-size:12px;margin-right:2px}
+.pk .chiprow{margin-top:6px}</style><link rel="icon" href="data:,"></head><body><header><h1>📈 台股選股</h1><p id="meta"></p></header>
 <main><!--DASH--><details class="fold" style="background:#05070a;color:#d1d5db;margin:0 0 10px"><summary>📊 大盤儀表板</summary><section id="dash" style="background:#05070a;color:#d1d5db;border-radius:12px;padding:10px;margin:0 0 12px;font-family:-apple-system,sans-serif">
 <style>#dash .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}#dash .g{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px}#dash .p{background:#0d1117;border:1px solid #1f2937;border-radius:10px;padding:10px}#dash h3{margin:0 0 6px;font-size:14px;color:#9ca3af;font-weight:600;letter-spacing:.5px}#dash .up{color:#ff4d4f}#dash .dn{color:#22c55e}#dash .big{font-size:24px;font-weight:700}#dash table{width:100%;border-collapse:collapse;font-size:13px}#dash td{padding:4px 2px;border-bottom:1px solid #1f2937}#dash .lt{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:6px;vertical-align:-2px}#dash .ch{height:220px}#dash .bar{height:10px;background:#1f2937;border-radius:5px;overflow:hidden}#dash .lg{font-size:11px;color:#6b7280}</style>
 <div style="display:flex;justify-content:space-between;align-items:baseline"><b style="color:#f59e0b">▌TRADING TERMINAL</b><span class="mono lg" id="d_asof"></span></div>
@@ -82,7 +88,7 @@ if(window.LightweightCharts)go();else{const s=document.createElement("script");s
 <li><b>多停損／多目標</b>只在出現🔴做多訊號時才有意義；<b>空停損／空目標</b>只在出現🟢做空訊號時才有意義。</li>
 <li>顏色依台股習慣：<span class="up">紅色＝漲</span>、<span class="dn">綠色＝跌</span>。</li>
 <li><span class="wait">觀望</span>＝目前沒有任何做多或做空進場訊號，只是剛好符合你的篩選條件，不要照停損/目標價操作。</li>
-<li><b>勝率</b>：該訊號在過去約半年資料中的回測勝率（見「回測勝率」）。點任一張卡片可開K線圖。</li><li><b>投信連買N天</b>：投信連續買超至少 3 個交易日。<b>大戶增持</b>：持股 400 張以上的大戶，持股比例比上一週增加（需有連續兩週集保資料才顯示）。</li></ul>
+<li><b>勝率</b>：該訊號在過去約半年資料中的回測勝率（見「回測勝率」）。點任一張卡片可開K線圖。</li><li><b>投信連買N天</b>：投信連續買超至少 3 個交易日。<b>大戶增持</b>：持股 400 張以上的大戶，持股比例比上一週增加（需有連續兩週集保資料才顯示）。</li><li><b>籌碼列</b>：每張卡片固定顯示當日外資／投信／自營買賣超、法人5日合計、融資／融券增減（單位：張；<span class="up">紅＝買超或增加</span>、<span class="dn">綠＝賣超或減少</span>）。有連買或連賣時會加註天數。</li></ul>
 <h4>🧪 回測勝率</h4><div id="btbox"></div><p class="note">以上皆依規則自動產生，僅供參考，非投資建議。</p></details></div>
 <div class="card"><details id="fp" open><summary>篩選條件</summary>
 <div class="grid"><div class="full"><label>搜尋代號／名稱</label><input id="q" placeholder="例如 2330 或 台積電"></div>
@@ -127,6 +133,12 @@ $("panes").innerHTML=TABS.map(t=>`<div class="pane" id="pn_${t.id}">${t.chk.leng
 <div class="grid">${t.rng.map(([k,l])=>`<div><label>${l}</label><div class="rng"><input data-r="${k}" data-e="0" type="number" inputmode="decimal" placeholder="最小"><input data-r="${k}" data-e="1" type="number" inputmode="decimal" placeholder="最大"></div></div>`).join("")}</div>${t.note?`<p class="note">📘 ${t.note}</p>`:""}</div>`).join("");
 const fm=(x,d=2)=>x==null?"–":x.toLocaleString("zh-TW",{minimumFractionDigits:d,maximumFractionDigits:d});
 const chipBadges=r=>{let h="";if((r.its||0)>=3)h+=`<span class="cb it" title="投信連續買超 ${r.its} 個交易日">投信連買${r.its}天</span>`;if(r.bigup)h+=`<span class="cb big" title="持股400張以上大戶，持股比例 ${fm(r.bigpct,2)}%${r.bigdlt!=null?`（週增 ${r.bigdlt>0?"+":""}${fm(r.bigdlt,2)} 百分點）`:""}">大戶增持</span>`;return h};
+const chipNum=x=>x==null?`<b>–</b>`:`<b class="${x>0?"up":x<0?"dn":""}">${x>0?"+":""}${fm(x,0)}</b>`;
+const chipRow=r=>{const items=[["外資",r.fi],["投信",r.it],["自營",r.dl],["法人5日",r.tt5],["融資",r.mg],["融券",r.ss]];
+ let h=items.map(([l,v])=>`<span class="ci"><span class="lb">${l}</span>${chipNum(v)}</span>`).join("");
+ if(r.fis)h+=`<span class="ci"><span class="lb">外資連</span><b class="${r.fis>0?"up":"dn"}">${r.fis>0?"買":"賣"}${Math.abs(r.fis)}日</b></span>`;
+ if(r.its)h+=`<span class="ci"><span class="lb">投信連</span><b class="${r.its>0?"up":"dn"}">${r.its>0?"買":"賣"}${Math.abs(r.its)}日</b></span>`;
+ return`<div class="chiprow"><span class="u">張</span>${h}</div>`};
 const INT=new Set(["v","fi","it","dl","tt","fi5","it5","dl5","tt5","fis","its","mg","ss"]);
 const sigs=r=>Object.entries(NM).filter(([k])=>r[k]).map(([k,v])=>`<span class="sig ${k[1]=="s"?"s":""}">${v}</span>`).join("")||`<span class="wait">觀望</span>`;
 const ptags=r=>Object.entries(PT).filter(([k])=>r[k]).map(([k,v])=>`<span class="sig ${["pbear","pboxd","pm","plblk","pdx","zbd","ppl"].includes(k)?"s":""}">${v}</span>`).join("")||"–";
@@ -147,7 +159,7 @@ function render(){const R=filt().sort((a,b)=>{const x=a[sk],y=b[sk];if(x==null)r
  $("sortSel").innerHTML=C.filter(c=>!["zsig","ptags"].includes(c[0])).flatMap(([k,l])=>[`<option value="${k}|-1">${l} 高→低</option>`,`<option value="${k}|1">${l} 低→高</option>`]).join("");if(![...$("sortSel").options].some(o=>o.value==sk+"|"+sd))$("sortSel").insertAdjacentHTML("afterbegin",`<option value="${sk}|${sd}">${sk}</option>`);$("sortSel").value=sk+"|"+sd;
  $("hd").innerHTML=C.map(([k,l])=>`<th data-k="${k}">${l}${k==sk?(sd>0?" ▲":" ▼"):""}</th>`).join("");
  const S=R.slice(0,600);$("tb").innerHTML=S.map(r=>`<tr data-c="${r.c}">${C.map(([k])=>`<td>${cell(r,k)}</td>`).join("")}</tr>`).join("")+(R.length>600?`<tr><td colspan=20>僅顯示前 600 筆，請再縮小條件</td></tr>`:"");
- $("cards").innerHTML=S.slice(0,200).map(r=>`<div class="sc ${r.zlong||r.zshort?"":"w"}" data-c="${r.c}"><h3><span>${r.c} ${r.n||""} ${cell(r,"m")}${chipBadges(r)}</span><span>${fm(r.p)} ${cell(r,"ch")}</span></h3><div class="kv">${C.slice(5).map(([k,l])=>`<div><span>${l}</span><b>${cell(r,k)}</b></div>`).join("")}</div>${plan(r)}</div>`).join("")+(R.length>200?"<p>手機版僅顯示前 200 筆，請再縮小條件</p>":"");
+ $("cards").innerHTML=S.slice(0,200).map(r=>`<div class="sc ${r.zlong||r.zshort?"":"w"}" data-c="${r.c}"><h3><span>${r.c} ${r.n||""} ${cell(r,"m")}${chipBadges(r)}</span><span>${fm(r.p)} ${cell(r,"ch")}</span></h3>${chipRow(r)}<div class="kv">${C.slice(5).map(([k,l])=>`<div><span>${l}</span><b>${cell(r,k)}</b></div>`).join("")}</div>${plan(r)}</div>`).join("")+(R.length>200?"<p>手機版僅顯示前 200 筆，請再縮小條件</p>":"");
  document.querySelectorAll("th").forEach(t=>t.onclick=()=>{if(["zsig","ptags"].includes(t.dataset.k))return;if(sk==t.dataset.k)sd=-sd;else{sk=t.dataset.k;sd=["c","n","m"].includes(sk)?1:-1}render()})}
 function setTab(t){tab=t;document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t==t));document.querySelectorAll(".pane").forEach(p=>p.classList.toggle("on",p.id=="pn_"+t));render()}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setTab(b.dataset.t));
@@ -182,6 +194,7 @@ function pk(r,s){const L=s=="L",ok=L?BULL:!BULL,p0=(r.pat||[])[0],bd=(t,bg,c)=>`
 return`<div class="pk ${L?"":"s"}" data-c="${r.c}" data-side="${s}"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:16px">${L?"🔴":"🟢"} ${r.n} <small style="color:#6b7280">${r.c}</small>${chipBadges(r)}</b><small>${L?"做多":"做空"}${ok?"":"・僅觀察"}</small></div>
 <div style="margin-top:3px">${r.tri&&L?bd("⭐ 三合一","#f59e0b","#fff"):""}${p0?bd(`${p0.n} ${p0.st}`,"#ede9fe","#5b21b6"):""}${bd(`風險 ${fm(r["rk"+s],1)}%`,r["rk"+s]>3?"#fef3c7":"#e0f2fe",r["rk"+s]>3?"#92400e":"#075985")}</div>
 <div class="nums"><div>進場<b>${fm(r["le"+s])}</b></div><div>停損<b style="color:#16a34a">${fm(L?r.sl:r.sst)}</b></div><div>目標<b style="color:#dc2626">${fm(L?r.tl:r.ts)}</b></div></div>
+${chipRow(r)}
 <details class="dt" onclick="event.stopPropagation()"><summary>詳細</summary><div class="pl">💡 ${r["why"+s]||sigN(r,s)}<br>${r["lw"+s]}・收盤 ${fm(r.p)}・目標 ${L?r.tlr:r.tsr}・報酬/風險 ${fm(r["rr"+s],1)}・量比 ${fm(r.vr)}・外資 ${fm(r.fi,0)}／投信 ${fm(r.it,0)} 張${r["wr"+s]!=null?`・回測勝率 ${fm(r["wr"+s],1)}%`:""}</div></details></div>`}
 const TL=topN("L",3),TS=topN("S",3);
 const XN=s=>D.filter(r=>r["scx"+s]!=null).length;
@@ -211,7 +224,7 @@ document.addEventListener("click",e=>{const el=e.target.closest("[data-c]");if(!
 async function openM(c,side){const r=BY.get(c);if(!r)return;side=side||(r.zlong?"L":r.zshort?"S":"");
  const L=side=="L",has=!!side;
  $("sheet").innerHTML=`<h3><span>${r.c} ${r.n} ${cell(r,"m")}${chipBadges(r)}</span><button class="r x">✕ 關閉</button></h3>
- <div style="font-size:13px;margin-top:4px">收盤 ${fm(r.p)} ${cell(r,"ch")}｜量比 ${fm(r.vr)}｜訊號：${sigs(r)}</div>${plan(r)}
+ <div style="font-size:13px;margin-top:4px">收盤 ${fm(r.p)} ${cell(r,"ch")}｜量比 ${fm(r.vr)}｜訊號：${sigs(r)}</div>${chipRow(r)}${plan(r)}
  ${(r.pat||[]).map(x=>`<div style="margin:6px 0 0;padding:6px 10px;border-radius:8px;background:${/突破|多頭/.test(x.st)?"#fee2e2":/跌破|空頭/.test(x.st)?"#dcfce7":"#ede9fe"};font-size:14px;font-weight:600">🔷 形態：${x.n} ${x.st}${x.k!=null?`　${/箱/.test(x.n)?"關鍵價":/趨勢/.test(x.st)?"關鍵價":"頸線"} ${fm(x.k)}`:""}<div style="font-weight:400;font-size:12px;color:#4b5563">${x.note}（圖上已標示）</div></div>`).join("")}<div id="chart"><p class="note">K線載入中…</p></div><div class="lg"><span><i style="background:#f59e0b"></i>MA5</span><span><i style="background:#8b5cf6"></i>MA10</span><span><i style="background:#2563eb"></i>MA20</span><span><i style="background:#64748b"></i>MA60</span><span>▼高點 ▲低點（左右各3根）</span>${has?`<span><i style="background:#111"></i>進場</span><span><i style="background:#ef4444"></i>停損</span><span><i style="background:#16a34a"></i>目標</span>`:"<span>觀望：無進場訊號，不畫進出場線</span>"}</div><div id="ana"></div>`;
  $("mod").classList.add("on");document.body.style.overflow="hidden";
  try{const[hj]=await Promise.all([fetch(`hist/${c}.json`).then(x=>{if(!x.ok)throw 0;return x.json()}),lw()]);const h=Array.isArray(hj)?hj:hj.k;$("ana").innerHTML=analysis(r,h,hj.ch||[]);
